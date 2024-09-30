@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'home_screen.dart'; // Import HomeScreen here
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -37,9 +38,18 @@ class _LoginScreenState extends State<LoginScreen> {
   void _submitForm() {
     if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
+
+      // Simulate a login success after validation
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Login Successful'),
       ));
+
+      // Redirect to HomeScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => HomePage()), // Navigate to HomeScreen
+      );
     }
   }
 

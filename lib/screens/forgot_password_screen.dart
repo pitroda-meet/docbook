@@ -50,18 +50,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             // Forgot Password Container
             Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16.0),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    spreadRadius: 5,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
               padding: EdgeInsets.all(24.0),
               child: Form(
                 key: _formKey,
@@ -105,10 +93,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() == true) {
-                          // Handle Forgot Password Logic here
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Verification email sent.'),
-                          ));
+                          // Navigate to the EnterCodeScreen
+                          Navigator.pushNamed(context, '/enter-code');
                         }
                       },
                       style: ElevatedButton.styleFrom(
