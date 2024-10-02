@@ -1,7 +1,10 @@
+import 'package:docbook/screens/profile_screen.dart';
+import 'package:docbook/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'appointments_page.dart';
 import 'doctor_detail_page.dart';
 import 'category_page.dart'; // Import the category page
+import 'settings_screen.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -18,9 +21,21 @@ class HomePage extends StatelessWidget {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: CircleAvatar(
-              backgroundColor: Colors.blue.shade100,
-              child: Icon(Icons.person, color: Colors.teal),
+            child: GestureDetector(
+              // Wrap the CircleAvatar with GestureDetector
+              onTap: () {
+                // Navigate to the profile page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ProfileScreen()), // Ensure ProfileScreen exists
+                );
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.blue.shade100,
+                child: Icon(Icons.person, color: Colors.teal),
+              ),
             ),
           ),
         ],
@@ -98,25 +113,29 @@ class HomePage extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
+        currentIndex: 2, // Set to "Categories" index
         type: BottomNavigationBarType.fixed,
         selectedItemColor: Colors.teal,
         unselectedItemColor: Colors.grey,
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (index) {
-          if (index == 1) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            ); // Navigate to Home
+          } else if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => AppointmentsPage()),
-            );
-          } else if (index == 2) {
+            ); // Navigate to Appointments
+          } else if (index == 3) {
+            // This corresponds to the "Settings" icon index
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      CategoryPage(categoryName: 'Category Placeholder')),
-            );
+              MaterialPageRoute(builder: (context) => SettingsScreen()),
+            ); // Navigate to Settings
           }
         },
         items: [
