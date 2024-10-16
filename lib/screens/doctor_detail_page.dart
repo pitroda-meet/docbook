@@ -1,4 +1,5 @@
 import 'package:docbook/screens/BookingPage.dart';
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
 
 class DoctorDetailPage extends StatelessWidget {
@@ -123,6 +124,7 @@ class DoctorDetailPage extends StatelessWidget {
           ],
         ),
       ),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
     );
   }
 

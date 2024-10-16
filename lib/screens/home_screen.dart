@@ -1,3 +1,4 @@
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/profile_screen.dart';
 import 'package:docbook/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -112,53 +113,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 2, // Set to "Categories" index
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            ); // Navigate to Home
-          } else if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AppointmentsPage()),
-            ); // Navigate to Appointments
-          } else if (index == 3) {
-            // This corresponds to the "Settings" icon index
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SettingsScreen()),
-            ); // Navigate to Settings
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, size: 25),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps, size: 25),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 25),
-            label: 'Settings',
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 8,
-      ),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
     );
   }
 

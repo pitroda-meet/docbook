@@ -1,3 +1,4 @@
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Import the HomePage
 
@@ -36,48 +37,7 @@ class AppointmentsPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 1, // Highlight the Appointments icon as the current page
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          } else if (index == 1) {
-            // Stay on AppointmentsPage (no action needed)
-          } else if (index == 2) {
-            // Add navigation for Dashboard or any other page
-          } else if (index == 3) {
-            // Add navigation for Settings or any other page
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, size: 25),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps, size: 25),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 25),
-            label: 'Settings',
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 8,
-      ),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 1),
     );
   }
 
