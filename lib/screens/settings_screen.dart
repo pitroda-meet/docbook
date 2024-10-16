@@ -1,5 +1,6 @@
 // lib/screens/settings_screen.dart
 
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_screen.dart'; // Import the profile screen
@@ -70,6 +71,7 @@ class SettingsScreen extends StatelessWidget {
           ),
         ],
       ),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 3),
     );
   }
 }

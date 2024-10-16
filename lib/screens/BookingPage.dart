@@ -1,4 +1,5 @@
 import 'package:docbook/screens/AppointmentScreen.dart';
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -175,59 +176,7 @@ class _BookingPageState extends State<BookingPage> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          // Handle navigation based on selected index
-          switch (index) {
-            case 0:
-              // Navigate to Home
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => HomePage()));
-              break;
-            case 1:
-              // Navigate to Appointments
-              // Implement the navigation logic for appointments
-              break;
-            case 2:
-              // Navigate to Dashboard
-              // Implement the navigation logic for dashboard
-              break;
-            case 3:
-              // Navigate to Settings
-              // Implement the navigation logic for settings
-              break;
-          }
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, size: 25),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps, size: 25),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 25),
-            label: 'Settings',
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 8,
-      ),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
     );
   }
 }
