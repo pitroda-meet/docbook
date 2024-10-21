@@ -1,13 +1,15 @@
 import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
-import 'home_screen.dart'; // Import the HomePage
+// Import the HomePage
 
 class AppointmentsPage extends StatelessWidget {
+  const AppointmentsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Appointments'),
+        title: const Text('Appointments'),
         backgroundColor: Colors.teal,
       ),
       body: Padding(
@@ -37,16 +39,16 @@ class AppointmentsPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 1),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 1),
     );
   }
 
   // Helper method to build appointment cards
   Widget _buildAppointmentCard(String doctor, String date, String time) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        title: Text(doctor, style: TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(doctor, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text('Date: $date\nTime: $time'),
       ),
     );

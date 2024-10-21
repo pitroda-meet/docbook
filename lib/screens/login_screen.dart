@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart'; // Import HomeScreen here
+import 'home_screen.dart'; // Ensure this path is correct
+import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
+import 'package:firebase_auth/firebase_auth.dart'; // Firebase Authentication
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -11,6 +15,9 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
   bool isPasswordVisible = false;
+
+  // Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Validate email
   String? _validateEmail(String? value) {
@@ -35,27 +42,61 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Form Submission
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
 
-      // Simulate a login success after validation
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Login Successful'),
-      ));
+      try {
+        // Firebase login
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email!, password: password!);
 
-      // Redirect to HomeScreen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => HomePage()), // Navigate to HomeScreen
-      );
+        // Check if the user's email is verified
+        if (!userCredential.user!.emailVerified) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please verify your email to log in.'),
+            ),
+          );
+          return; // Exit if email is not verified
+        }
+
+        // Save user information to Firestore
+        await _firestore.collection('users').doc(userCredential.user?.uid).set({
+          'email': email,
+          'loginTime': DateTime.now(),
+        });
+
+        // Simulate a login success after validation
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Login Successful'),
+        ));
+
+        // Redirect to HomeScreen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()), // Navigate to HomeScreen
+        );
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Login Failed: ${e.message}'),
+        ));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -65,14 +106,14 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               // Logo
-              Image(
+              const Image(
                 image: AssetImage('assets/Frame.png'), // Ensure correct path
                 height: 100,
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               // App Title
-              Text(
+              const Text(
                 'DocBook',
                 style: TextStyle(
                   fontSize: 24.0,
@@ -80,11 +121,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 32.0),
+              const SizedBox(height: 32.0),
 
               // Email Field
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
@@ -92,18 +133,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: _validateEmail,
                 onSaved: (value) => email = value,
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               // Password Field
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                     ),
                     onPressed: () {
                       setState(() {
@@ -116,41 +155,40 @@ class _LoginScreenState extends State<LoginScreen> {
                 validator: _validatePassword,
                 onSaved: (value) => password = value,
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               // Login Button
               ElevatedButton(
                 onPressed: _submitForm,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   backgroundColor: Colors.teal,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text('Login', style: TextStyle(fontSize: 18.0)),
+                child: const Text('Login', style: TextStyle(fontSize: 18.0)),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               // Forgot Password Link
               GestureDetector(
                 onTap: () {
                   Navigator.pushNamed(context, '/forgot-password');
                 },
-                child: Text(
+                child: const Text(
                   'Forgot password',
                   style: TextStyle(color: Colors.teal),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
 
               // Don't have an account? Sign Up
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, '/signup'); // Navigate to Sign Up page
+                  Navigator.pushNamed(context, '/signup'); // Navigate to Sign Up page
                 },
-                child: Text(
+                child: const Text(
                   'Don\'t have an account? Join us',
                   style: TextStyle(color: Colors.teal),
                 ),

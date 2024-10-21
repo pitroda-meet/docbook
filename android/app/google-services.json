@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "927116423153",
+    "project_id": "batch-a-project",
+    "storage_bucket": "batch-a-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:927116423153:android:7de8189c4a60369ac9de50",
+        "android_client_info": {
+          "package_name": "com.yourname.docbook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0HOmyVyduWE9RUz6cqvnD8hKKnhXlZMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

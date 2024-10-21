@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AboutUsScreen extends StatelessWidget {
+  const AboutUsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +17,7 @@ class AboutUsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Logo or Main Image
-              Center(
+              const Center(
                 child: CircleAvatar(
                   radius: 80,
                   backgroundImage: AssetImage(

@@ -7,7 +7,7 @@ class DoctorDetailPage extends StatelessWidget {
   final String specialization;
   final String imagePath;
 
-  DoctorDetailPage({
+  const DoctorDetailPage({super.key, 
     required this.doctorName,
     required this.specialization,
     required this.imagePath,
@@ -21,12 +21,12 @@ class DoctorDetailPage extends StatelessWidget {
         backgroundColor: Colors.teal,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text('Appointment', style: TextStyle(color: Colors.black)),
+        title: const Text('Appointment', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -48,27 +48,27 @@ class DoctorDetailPage extends StatelessWidget {
                       radius: 40,
                       backgroundImage: AssetImage(imagePath),
                     ),
-                    SizedBox(width: 16),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             doctorName,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             specialization,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               color: Colors.grey,
                             ),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           ElevatedButton(
                             onPressed: () {
                               Navigator.push(
@@ -88,7 +88,7 @@ class DoctorDetailPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text(
+                            child: const Text(
                               'Book Now',
                               style: TextStyle(color: Colors.white),
                             ),
@@ -100,17 +100,17 @@ class DoctorDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Services Section
-            Text(
+            const Text(
               'Services',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // List of Services
             _buildServiceItem(
@@ -124,7 +124,7 @@ class DoctorDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
     );
   }
 
@@ -137,7 +137,7 @@ class DoctorDetailPage extends StatelessWidget {
         children: [
           Text(
             '$index. ',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16,
               color: Colors.green,
               fontWeight: FontWeight.bold,

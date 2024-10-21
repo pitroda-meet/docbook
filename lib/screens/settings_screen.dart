@@ -4,12 +4,11 @@ import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_screen.dart'; // Import the profile screen
-import 'change_password_screen.dart';
 import 'about_us_screen.dart';
 import 'patient_details_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key); // Added const constructor
+  const SettingsScreen({super.key}); // Added const constructor
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ProfileScreen()), // Ensure const constructor
+                        const ProfileScreen()), // Ensure const constructor
               );
             },
           ),
@@ -41,7 +40,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        ResetPasswordScreen()), // Ensure const constructor
+                        const ResetPasswordScreen()), // Ensure const constructor
               );
             },
           ),
@@ -53,7 +52,7 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        AboutUsScreen()), // Ensure const constructor
+                        const AboutUsScreen()), // Ensure const constructor
               );
             },
           ),
@@ -65,13 +64,13 @@ class SettingsScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                        PatientDetailsScreen()), // Ensure const constructor
+                        const PatientDetailsScreen()), // Ensure const constructor
               );
             },
           ),
         ],
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 3),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 3),
     );
   }
 }

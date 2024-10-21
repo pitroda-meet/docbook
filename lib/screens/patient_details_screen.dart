@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class PatientDetailsScreen extends StatefulWidget {
+  const PatientDetailsScreen({super.key});
+
   @override
   _PatientDetailsScreenState createState() => _PatientDetailsScreenState();
 }
@@ -115,7 +117,7 @@ class _PatientDetailsScreenState extends State<PatientDetailsScreen> {
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(),
+        border: const OutlineInputBorder(),
       ),
       onChanged: onChanged,
     );

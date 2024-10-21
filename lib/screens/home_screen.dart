@@ -1,18 +1,17 @@
-import 'package:docbook/screens/bottom_bar_widget.dart';
-import 'package:docbook/screens/profile_screen.dart';
-import 'package:docbook/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
-import 'appointments_page.dart';
+import 'package:docbook/screens/profile_screen.dart';
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'doctor_detail_page.dart';
-import 'category_page.dart'; // Import the category page
-import 'settings_screen.dart';
+import 'category_page.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Find Your Doctor',
           style: TextStyle(color: Colors.white, fontSize: 18),
         ),
@@ -23,19 +22,16 @@ class HomePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: GestureDetector(
-              // Wrap the CircleAvatar with GestureDetector
               onTap: () {
-                // Navigate to the profile page
+                // Navigate to the Profile page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen()), // Ensure ProfileScreen exists
+                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
                 );
               },
               child: CircleAvatar(
                 backgroundColor: Colors.blue.shade100,
-                child: Icon(Icons.person, color: Colors.teal),
+                child: const Icon(Icons.person, color: Colors.teal),
               ),
             ),
           ),
@@ -53,8 +49,8 @@ class HomePage extends StatelessWidget {
           children: [
             // Search Bar
             Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
@@ -63,11 +59,11 @@ class HomePage extends StatelessWidget {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 5,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
-              child: TextField(
+              child: const TextField(
                 decoration: InputDecoration(
                   hintText: 'Search.....',
                   border: InputBorder.none,
@@ -91,7 +87,7 @@ class HomePage extends StatelessWidget {
               ],
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Doctor Cards
             Expanded(
@@ -113,7 +109,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
     );
   }
 
@@ -135,8 +131,8 @@ class HomePage extends StatelessWidget {
             backgroundColor: color.withOpacity(0.2),
             child: Icon(iconData, size: 30, color: color),
           ),
-          SizedBox(height: 5),
-          Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -158,14 +154,14 @@ class HomePage extends StatelessWidget {
         );
       },
       child: Card(
-        margin: EdgeInsets.all(8),
+        margin: const EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Column(
           children: [
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                   image: DecorationImage(
                     image: AssetImage(imagePath),
                     fit: BoxFit.cover,
@@ -180,11 +176,11 @@ class HomePage extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
                     specialization,
-                    style: TextStyle(color: Colors.teal),
+                    style: const TextStyle(color: Colors.teal),
                   ),
                 ],
               ),

@@ -1,12 +1,10 @@
-import 'package:docbook/screens/appointments_page.dart';
 import 'package:docbook/screens/bottom_bar_widget.dart';
-import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class CategoryPage extends StatelessWidget {
   final String categoryName;
 
-  CategoryPage({required this.categoryName});
+  const CategoryPage({super.key, required this.categoryName});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +15,7 @@ class CategoryPage extends StatelessWidget {
       ),
       body: GridView.count(
         crossAxisCount: 2,
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         children: [
           _buildCategoryCard(context, 'Body', Icons.person),
           _buildCategoryCard(context, 'Ear', Icons.hearing),
@@ -27,7 +25,7 @@ class CategoryPage extends StatelessWidget {
           _buildCategoryCard(context, 'Heart', Icons.favorite),
         ],
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 2),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 2),
     );
   }
 
@@ -46,10 +44,10 @@ class CategoryPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: 50),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -62,7 +60,7 @@ class CategoryPage extends StatelessWidget {
 class CategoryDetailPage extends StatelessWidget {
   final String categoryName;
 
-  CategoryDetailPage({required this.categoryName});
+  const CategoryDetailPage({super.key, required this.categoryName});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +72,7 @@ class CategoryDetailPage extends StatelessWidget {
       body: Center(
         child: Text(
           'Doctors related to $categoryName',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         ),
       ),
     );

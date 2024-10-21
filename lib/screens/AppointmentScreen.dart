@@ -1,7 +1,7 @@
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'doctor_detail_page.dart'; // Import the detail page
+// Import the detail page
 
 // class AppointmentApp extends StatelessWidget {
 //   @override
@@ -13,13 +13,15 @@ import 'doctor_detail_page.dart'; // Import the detail page
 // }
 
 class AppointmentScreen extends StatefulWidget {
+  const AppointmentScreen({super.key});
+
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime _selectedDay = DateTime.now();
-  TimeOfDay _selectedTime = TimeOfDay(hour: 14, minute: 0);
+  TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
   int _selectedReminder = 25;
 
   int _currentIndex = 1; // Default to Appointments screen
@@ -31,11 +33,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Appointment', style: TextStyle(fontSize: 20)),
+        title: const Text('Appointment', style: TextStyle(fontSize: 20)),
         backgroundColor: Colors.teal,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
@@ -73,7 +75,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             case 0:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HomePage()),
+                MaterialPageRoute(builder: (context) => const HomePage()),
               );
               break;
             case 1:
@@ -87,7 +89,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               break;
           }
         },
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home, size: 30),
             label: 'Home',
@@ -128,9 +130,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       headerStyle: HeaderStyle(
         formatButtonVisible: false,
         titleCentered: true,
-        leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white),
-        rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white),
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 16),
+        leftChevronIcon: const Icon(Icons.chevron_left, color: Colors.white),
+        rightChevronIcon: const Icon(Icons.chevron_right, color: Colors.white),
+        titleTextStyle: const TextStyle(color: Colors.white, fontSize: 16),
         decoration: BoxDecoration(
           color: Colors.teal,
           borderRadius: BorderRadius.circular(8),
@@ -142,11 +144,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           color: Colors.teal.withOpacity(0.4),
           shape: BoxShape.circle,
         ),
-        selectedDecoration: BoxDecoration(
+        selectedDecoration: const BoxDecoration(
           color: Colors.teal,
           shape: BoxShape.circle,
         ),
-        todayTextStyle: TextStyle(color: Colors.black),
+        todayTextStyle: const TextStyle(color: Colors.black),
       ),
     );
   }
@@ -155,7 +157,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Available Time',
+        const Text('Available Time',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         SizedBox(height: screenWidth * 0.02),
         Wrap(
@@ -169,11 +171,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   List<Widget> _buildTimeOptions(double screenWidth) {
     final times = [
-      TimeOfDay(hour: 10, minute: 0),
-      TimeOfDay(hour: 12, minute: 0),
-      TimeOfDay(hour: 14, minute: 0),
-      TimeOfDay(hour: 15, minute: 0),
-      TimeOfDay(hour: 16, minute: 0),
+      const TimeOfDay(hour: 10, minute: 0),
+      const TimeOfDay(hour: 12, minute: 0),
+      const TimeOfDay(hour: 14, minute: 0),
+      const TimeOfDay(hour: 15, minute: 0),
+      const TimeOfDay(hour: 16, minute: 0),
     ];
 
     return times.map((time) {
@@ -216,7 +218,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Reminder Me Before',
+        const Text('Reminder Me Before',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         SizedBox(height: screenWidth * 0.02),
         Row(
@@ -261,7 +263,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         onPressed: () {
           // Handle confirmation action
         },
-        child: Text('Confirm', style: TextStyle(fontSize: 16)),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal,
           padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
@@ -270,6 +271,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
           minimumSize: Size(screenWidth * 0.4, screenWidth * 0.12),
         ),
+        child: const Text('Confirm', style: TextStyle(fontSize: 16)),
       ),
     );
   }

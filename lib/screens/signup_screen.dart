@@ -1,7 +1,10 @@
-// Sign-Up Page Code
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -14,7 +17,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPasswordVisible = false;
   bool isTermsAccepted = false;
 
-  // Validate email
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  // Email Validation
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email is required';
@@ -26,7 +31,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
-  // Validate password
+  // Password Validation
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password is required';
@@ -36,7 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return null;
   }
 
-  // Validate name
+  // Name Validation
   String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Name is required';
@@ -45,22 +50,79 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   // Form Submission
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState?.validate() == true && isTermsAccepted) {
       _formKey.currentState?.save();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Sign Up Successful'),
-      ));
+
+      try {
+        // Create user with Firebase Authentication
+        UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email!, password: password!);
+
+        // Save user info in Firestore
+        await _firestore.collection('users').doc(userCredential.user?.uid).set({
+          'name': name,
+          'email': email,
+          'signupTime': FieldValue.serverTimestamp(),
+        });
+
+        // Send verification email with custom content
+        await userCredential.user?.sendEmailVerification(ActionCodeSettings(
+          url: 'https://batch-a-project.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+          handleCodeInApp: true,
+          androidPackageName: 'com.example.docbook', // Android package
+          iOSBundleId: 'com.example.docbook', // iOS bundle
+          androidInstallApp: true,
+        ));
+
+        // Display confirmation message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Verification email sent. Check your inbox.')),
+        );
+
+        // Redirect to login screen or verification instruction screen
+        Navigator.pushReplacementNamed(context, '/login');
+
+      } on FirebaseAuthException catch (e) {
+        String errorMessage;
+        switch (e.code) {
+          case 'email-already-in-use':
+            errorMessage = 'Email is already in use.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'Invalid email format.';
+            break;
+          case 'weak-password':
+            errorMessage = 'Weak password.';
+            break;
+          default:
+            errorMessage = 'Sign Up Failed: ${e.message}';
+            break;
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     } else if (!isTermsAccepted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('You must accept the terms and conditions'),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You must accept the terms and conditions')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back
+          },
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -69,15 +131,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
-              Image(
-                image: AssetImage('assets/Frame.png'), // Corrected asset path
+              const Image(
+                image: AssetImage('assets/Frame.png'),
                 height: 100,
               ),
-              SizedBox(height: 16.0),
-
-              // App Title
-              Text(
+              const SizedBox(height: 16.0),
+              const Text(
                 'DocBook',
                 style: TextStyle(
                   fontSize: 24.0,
@@ -85,42 +144,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   color: Colors.black,
                 ),
               ),
-              SizedBox(height: 32.0),
-
-              // Name Field
+              const SizedBox(height: 32.0),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Name',
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.name,
                 validator: _validateName,
                 onSaved: (value) => name = value,
               ),
-              SizedBox(height: 16.0),
-
-              // Email Field
+              const SizedBox(height: 16.0),
               TextFormField(
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.emailAddress,
                 validator: _validateEmail,
                 onSaved: (value) => email = value,
               ),
-              SizedBox(height: 16.0),
-
-              // Password Field
+              const SizedBox(height: 16.0),
               TextFormField(
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
                     ),
                     onPressed: () {
                       setState(() {
@@ -133,9 +182,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 validator: _validatePassword,
                 onSaved: (value) => password = value,
               ),
-              SizedBox(height: 16.0),
-
-              // Terms and Conditions Checkbox
+              const SizedBox(height: 16.0),
               Row(
                 children: [
                   Checkbox(
@@ -146,7 +193,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       });
                     },
                   ),
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'I agree with the Terms of Service & Privacy Policy',
                       style: TextStyle(color: Colors.grey),
@@ -154,30 +201,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
-
-              // Sign Up Button
+              const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submitForm,
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   backgroundColor: Colors.teal,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text('Sign Up', style: TextStyle(fontSize: 18.0)),
+                child: const Text('Sign Up', style: TextStyle(fontSize: 18.0)),
               ),
-              SizedBox(height: 16.0),
-
-              // Already have an account? Log in
-              // Already have an account? Log in
+              const SizedBox(height: 16.0),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, '/login'); // Navigate to Login Page
+                  Navigator.pushNamed(context, '/login');
                 },
-                child: Text(
+                child: const Text(
                   'Have an account? Log in',
                   style: TextStyle(color: Colors.teal),
                 ),

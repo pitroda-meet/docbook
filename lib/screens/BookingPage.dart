@@ -1,6 +1,5 @@
 import 'package:docbook/screens/AppointmentScreen.dart';
 import 'package:docbook/screens/bottom_bar_widget.dart';
-import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class BookingPage extends StatefulWidget {
@@ -8,7 +7,7 @@ class BookingPage extends StatefulWidget {
   final String specialization;
   final String imagePath;
 
-  BookingPage({
+  const BookingPage({super.key, 
     required this.doctorName,
     required this.specialization,
     required this.imagePath,
@@ -19,7 +18,7 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
-  int _currentIndex = 0; // Index for the bottom navigation bar
+  final int _currentIndex = 0; // Index for the bottom navigation bar
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   String _selectedGender = 'Male'; // Default gender selection
@@ -29,7 +28,7 @@ class _BookingPageState extends State<BookingPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal,
-        title: Text('Book Appointment'),
+        title: const Text('Book Appointment'),
         centerTitle: true,
       ),
       body: Padding(
@@ -44,51 +43,51 @@ class _BookingPageState extends State<BookingPage> {
                   radius: 40,
                   backgroundImage: AssetImage(widget.imagePath),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         widget.doctorName,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         widget.specialization,
-                        style: TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: Colors.grey),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Patient's Name
-            Text('Patient\'s Name'),
+            const Text('Patient\'s Name'),
             TextField(
               controller: _nameController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Age Section
-            Text('Age'),
+            const Text('Age'),
             TextField(
               controller: _ageController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Enter Age',
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Gender Selection
-            Text('Gender'),
+            const Text('Gender'),
             Row(
               children: [
                 Row(
@@ -102,7 +101,7 @@ class _BookingPageState extends State<BookingPage> {
                         });
                       },
                     ),
-                    Text('Male'),
+                    const Text('Male'),
                   ],
                 ),
                 Row(
@@ -116,7 +115,7 @@ class _BookingPageState extends State<BookingPage> {
                         });
                       },
                     ),
-                    Text('Female'),
+                    const Text('Female'),
                   ],
                 ),
                 Row(
@@ -130,30 +129,30 @@ class _BookingPageState extends State<BookingPage> {
                         });
                       },
                     ),
-                    Text('Others'),
+                    const Text('Others'),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Mobile Number
-            Text('Mobile Number'),
-            TextField(
+            const Text('Mobile Number'),
+            const TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
             // Email
-            Text('Email'),
-            TextField(
+            const Text('Email'),
+            const TextField(
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             // Confirm Booking Button
             ElevatedButton(
@@ -163,20 +162,20 @@ class _BookingPageState extends State<BookingPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        AppointmentScreen(), // Pass necessary data if required
+                        const AppointmentScreen(), // Pass necessary data if required
                   ),
                 );
               },
-              child: Text('Confirm Booking'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal, // Updated to backgroundColor
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               ),
+              child: const Text('Confirm Booking'),
             ),
           ],
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 0),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
     );
   }
 }

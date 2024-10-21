@@ -1,19 +1,28 @@
-import 'package:docbook/screens/category_page.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/signup_screen.dart';
-import 'screens/login_screen.dart'; // Import the login screen
+import 'screens/login_screen.dart';
 import 'screens/forgot_password_screen.dart';
-import 'screens/home_screen.dart'; // Import the home screen
-import 'screens/enter_code_screen.dart'; // Import the home screen
+import 'screens/home_screen.dart';
+import 'screens/enter_code_screen.dart';
+import 'screens/reset_password_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-import 'screens/reset_password_screen.dart'; // Import the home screen
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -22,14 +31,14 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.teal,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(),
+      home: const SplashScreen(), // Start with SplashScreen
       routes: {
-        '/signup': (context) => SignUpScreen(),
-        '/login': (context) => LoginScreen(), // Add route to LoginScreen
-        '/forgot-password': (context) => ForgotPasswordScreen(),
-        '/home': (context) => HomePage(), // Add route for the home screen
-        '/enter-code': (context) => EnterCodeScreen(),
-        '/reset-password': (context) => ResetPasswordScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignUpScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
+        '/enter-code': (context) => const EnterCodeScreen(),
+        '/reset-password': (context) => const ResetPasswordScreen(),
+        '/home': (context) => const HomePage(), // Home screen after login
       },
     );
   }

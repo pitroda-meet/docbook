@@ -7,8 +7,7 @@ import 'settings_screen.dart';
 class BottomBarWidget extends StatelessWidget {
   final int currentIndex;
 
-  const BottomBarWidget({Key? key, required this.currentIndex})
-      : super(key: key);
+  const BottomBarWidget({super.key, required this.currentIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -23,28 +22,28 @@ class BottomBarWidget extends StatelessWidget {
         if (index == 0) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => const HomePage()),
           );
         } else if (index == 1) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AppointmentsPage()),
+            MaterialPageRoute(builder: (context) => const AppointmentsPage()),
           );
         } else if (index == 2) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (context) =>
-                    CategoryPage(categoryName: 'All Categories')),
+                    const CategoryPage(categoryName: 'All Categories')),
           );
         } else if (index == 3) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SettingsScreen()),
+            MaterialPageRoute(builder: (context) => const SettingsScreen()),
           );
         }
       },
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home, size: 30),
           label: 'Home',

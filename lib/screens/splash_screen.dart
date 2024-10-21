@@ -1,7 +1,9 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -10,33 +12,41 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, '/signup');
-    });
+    _checkLoginStatus();
+  }
+
+  // Check if user is logged in
+  Future<void> _checkLoginStatus() async {
+    // Simulate a delay for the splash screen (increase to 4 seconds)
+    await Future.delayed(const Duration(seconds: 2)); // Changed from 2 to 4 seconds
+
+    // Get the current user from FirebaseAuth
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      // If user is not logged in, navigate to the LoginScreen
+      Navigator.pushReplacementNamed(context, '/login');
+    } else {
+      // If user is logged in, navigate to HomePage
+      Navigator.pushReplacementNamed(context, '/home');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Splash Logo
+            // Add your logo image here
             Image.asset(
-              'assets/Frame.png', // Update with the path to the splash image
-              height: 150,
+              'assets/Frame.png', // Ensure correct path
+              height: 100, // Adjust the height as needed
+              fit: BoxFit.contain, // Maintain aspect ratio
             ),
-            SizedBox(height: 16.0),
-            Text(
-              'DocBook',
-              style: TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal,
-              ),
-            ),
+            const SizedBox(height: 20), // Space between logo and loading indicator
+            const CircularProgressIndicator(), // Show a loading indicator
           ],
         ),
       ),
