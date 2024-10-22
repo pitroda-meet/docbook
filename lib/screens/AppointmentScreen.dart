@@ -1,3 +1,4 @@
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -59,57 +60,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index; // Update the current index
-          });
-          // Handle navigation based on the index
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-              break;
-            case 1:
-              // Stay on the current Appointment screen
-              break;
-            case 2:
-              // Navigate to Dashboard screen (create this screen)
-              break;
-            case 3:
-              // Navigate to Settings screen (create this screen)
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, size: 25),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps, size: 25),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 25),
-            label: 'Settings',
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 8,
-      ),
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
     );
   }
 

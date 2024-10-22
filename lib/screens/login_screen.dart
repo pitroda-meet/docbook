@@ -75,7 +75,8 @@ class _LoginScreenState extends State<LoginScreen> {
         // Redirect to HomeScreen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()), // Navigate to HomeScreen
+          MaterialPageRoute(
+              builder: (context) => const HomePage()), // Navigate to HomeScreen
         );
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -98,102 +99,118 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logo
-              const Image(
-                image: AssetImage('assets/Frame.png'), // Ensure correct path
-                height: 100,
-              ),
-              const SizedBox(height: 16.0),
-
-              // App Title
-              const Text(
-                'DocBook',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      // Fix overflow issue by setting resizeToAvoidBottomInset to true
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Allow scrolling when keyboard appears
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                const Image(
+                  image: AssetImage('assets/Frame.png'), // Ensure correct path
+                  height: 100,
                 ),
-              ),
-              const SizedBox(height: 32.0),
+                const SizedBox(height: 16.0),
 
-              // Email Field
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: _validateEmail,
-                onSaved: (value) => email = value,
-              ),
-              const SizedBox(height: 16.0),
-
-              // Password Field
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
+                // App Title
+                const Text(
+                  'DocBook',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-                obscureText: !isPasswordVisible,
-                validator: _validatePassword,
-                onSaved: (value) => password = value,
-              ),
-              const SizedBox(height: 16.0),
+                const SizedBox(height: 32.0),
 
-              // Login Button
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Email Field
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                        onSaved: (value) => email = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Password Field
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !isPasswordVisible,
+                        validator: _validatePassword,
+                        onSaved: (value) => password = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Login Button
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Login',
+                            style: TextStyle(fontSize: 18.0)),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Forgot Password Link
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/forgot-password');
+                        },
+                        child: const Text(
+                          'Forgot password',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Don't have an account? Sign Up
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, '/signup'); // Navigate to Sign Up page
+                        },
+                        child: const Text(
+                          'Don\'t have an account? Join us',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: const Text('Login', style: TextStyle(fontSize: 18.0)),
-              ),
-              const SizedBox(height: 16.0),
-
-              // Forgot Password Link
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/forgot-password');
-                },
-                child: const Text(
-                  'Forgot password',
-                  style: TextStyle(color: Colors.teal),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-
-              // Don't have an account? Sign Up
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/signup'); // Navigate to Sign Up page
-                },
-                child: const Text(
-                  'Don\'t have an account? Join us',
-                  style: TextStyle(color: Colors.teal),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

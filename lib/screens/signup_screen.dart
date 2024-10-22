@@ -68,7 +68,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         // Send verification email with custom content
         await userCredential.user?.sendEmailVerification(ActionCodeSettings(
-          url: 'https://batch-a-project.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
+          url:
+              'https://batch-a-project.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
           handleCodeInApp: true,
           androidPackageName: 'com.example.docbook', // Android package
           iOSBundleId: 'com.example.docbook', // iOS bundle
@@ -77,12 +78,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         // Display confirmation message
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Verification email sent. Check your inbox.')),
+          const SnackBar(
+              content: Text('Verification email sent. Check your inbox.')),
         );
 
         // Redirect to login screen or verification instruction screen
         Navigator.pushReplacementNamed(context, '/login');
-
       } on FirebaseAuthException catch (e) {
         String errorMessage;
         switch (e.code) {
@@ -106,7 +107,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } else if (!isTermsAccepted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You must accept the terms and conditions')),
+        const SnackBar(
+            content: Text('You must accept the terms and conditions')),
       );
     }
   }
@@ -124,106 +126,132 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Image(
-                image: AssetImage('assets/Frame.png'),
-                height: 100,
-              ),
-              const SizedBox(height: 16.0),
-              const Text(
-                'DocBook',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+      // Fix overflow issue by setting resizeToAvoidBottomInset to true
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Allow scrolling when keyboard appears
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Image(
+                  image: AssetImage('assets/Frame.png'), // Ensure correct path
+                  height: 100,
                 ),
-              ),
-              const SizedBox(height: 32.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  border: OutlineInputBorder(),
-                ),
-                validator: _validateName,
-                onSaved: (value) => name = value,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                ),
-                validator: _validateEmail,
-                onSaved: (value) => email = value,
-              ),
-              const SizedBox(height: 16.0),
-              TextFormField(
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        isPasswordVisible = !isPasswordVisible;
-                      });
-                    },
+                const SizedBox(height: 16.0),
+                const Text(
+                  'DocBook',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-                obscureText: !isPasswordVisible,
-                validator: _validatePassword,
-                onSaved: (value) => password = value,
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Checkbox(
-                    value: isTermsAccepted,
-                    onChanged: (value) {
-                      setState(() {
-                        isTermsAccepted = value ?? false;
-                      });
-                    },
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'I agree with the Terms of Service & Privacy Policy',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  backgroundColor: Colors.teal,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                const SizedBox(height: 32.0),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Name Field
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: _validateName,
+                        onSaved: (value) => name = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Email Field
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: _validateEmail,
+                        onSaved: (value) => email = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Password Field
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !isPasswordVisible,
+                        validator: _validatePassword,
+                        onSaved: (value) => password = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Terms and Conditions Checkbox
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: isTermsAccepted,
+                            onChanged: (value) {
+                              setState(() {
+                                isTermsAccepted = value ?? false;
+                              });
+                            },
+                          ),
+                          const Expanded(
+                            child: Text(
+                              'I agree with the Terms of Service & Privacy Policy',
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Sign Up Button
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Sign Up',
+                            style: TextStyle(fontSize: 18.0)),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Already have an account? Log In link
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                        child: const Text(
+                          'Have an account? Log in',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                child: const Text('Sign Up', style: TextStyle(fontSize: 18.0)),
-              ),
-              const SizedBox(height: 16.0),
-              GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-                child: const Text(
-                  'Have an account? Log in',
-                  style: TextStyle(color: Colors.teal),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
