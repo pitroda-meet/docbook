@@ -4,12 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  final String doctorName;
+  final String specialization;
+  final DateTime selectedDate;
+  final TimeOfDay selectedTime;
+
   const AppointmentScreen({
     super.key, 
-    required String doctorName, 
-    required String specialization, 
-    required DateTime selectedDate, 
-    required TimeOfDay selectedTime,
+    required this.doctorName, 
+    required this.specialization, 
+    required this.selectedDate, 
+    required this.selectedTime,
   });
 
   @override
@@ -17,10 +22,17 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  DateTime _selectedDay = DateTime.now();
-  TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
+  late DateTime _selectedDay;
+  late TimeOfDay _selectedTime;
   int _selectedReminder = 25;
-  int _currentIndex = 1;
+  final int _currentIndex = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDay = widget.selectedDate;
+    _selectedTime = widget.selectedTime;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,74 +56,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: screenHeight * 0.02),
-              _buildCalendar(screenHeight),
+              _buildCalendar(),
               SizedBox(height: screenHeight * 0.02),
-              _buildAvailableTimes(screenWidth),
+              _buildAvailableTimes(),
               SizedBox(height: screenHeight * 0.02),
-              _buildReminderOptions(screenWidth),
+              _buildReminderOptions(),
               SizedBox(height: screenHeight * 0.02),
-              _buildConfirmButton(screenWidth),
+              _buildConfirmButton(),
             ],
           ),
         ),
       ),
-<<<<<<< HEAD
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          switch (index) {
-            case 0:
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const HomePage()),
-              );
-              break;
-            case 1:
-              break;
-            case 2:
-              // Handle other screens
-              break;
-            case 3:
-              // Handle other screens
-              break;
-          }
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home, size: 30),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today, size: 25),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.apps, size: 25),
-            label: 'Dashboard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings, size: 25),
-            label: 'Settings',
-          ),
-        ],
-        backgroundColor: Colors.white,
-        elevation: 8,
-      ),
-=======
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
->>>>>>> 6d6bc9055eaebe7165cd745ec5636888d4c7fa84
+      bottomNavigationBar: BottomBarWidget(currentIndex: 1, onTabTapped: (int value) {  },),
     );
   }
 
-  Widget _buildCalendar(double screenHeight) {
+  Widget _buildCalendar() {
     return TableCalendar(
       firstDay: DateTime.utc(2020, 1, 1),
       lastDay: DateTime.utc(2030, 12, 31),
@@ -151,22 +111,22 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 
-  Widget _buildAvailableTimes(double screenWidth) {
+  Widget _buildAvailableTimes() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Available Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: screenWidth * 0.02),
+        SizedBox(height: 16),
         Wrap(
-          spacing: screenWidth * 0.02,
-          runSpacing: screenWidth * 0.02,
-          children: _buildTimeOptions(screenWidth),
+          spacing: 8,
+          runSpacing: 8,
+          children: _buildTimeOptions(),
         ),
       ],
     );
   }
 
-  List<Widget> _buildTimeOptions(double screenWidth) {
+  List<Widget> _buildTimeOptions() {
     final times = [
       const TimeOfDay(hour: 10, minute: 0),
       const TimeOfDay(hour: 12, minute: 0),
@@ -184,8 +144,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           });
         },
         child: Container(
-          width: screenWidth * 0.28,
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+          width: 80,
+          padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: isSelected ? Colors.teal : Colors.teal.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8),
@@ -209,14 +169,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }).toList();
   }
 
-  Widget _buildReminderOptions(double screenWidth) {
+  Widget _buildReminderOptions() {
     final reminders = [10, 25, 30, 35, 40];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Reminder Me Before', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: screenWidth * 0.02),
+        SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: reminders.map((minutes) {
@@ -228,8 +188,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 });
               },
               child: Container(
-                width: screenWidth * 0.15,
-                padding: EdgeInsets.symmetric(vertical: screenWidth * 0.015),
+                width: 80,
+                padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   color: isSelected ? Colors.teal : Colors.teal.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -252,7 +212,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     );
   }
 
-  Widget _buildConfirmButton(double screenWidth) {
+  Widget _buildConfirmButton() {
     return Center(
       child: ElevatedButton(
         onPressed: () {
@@ -264,11 +224,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal,
-          padding: EdgeInsets.symmetric(vertical: screenWidth * 0.02),
+          padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
-          minimumSize: Size(screenWidth * 0.4, screenWidth * 0.12),
+          minimumSize: const Size(150, 48),
         ),
         child: const Text('Confirm', style: TextStyle(fontSize: 16)),
       ),
