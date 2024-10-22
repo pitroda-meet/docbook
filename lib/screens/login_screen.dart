@@ -66,12 +66,17 @@ Future<void> _submitForm() async {
       if (isAdmin) {
         Navigator.pushReplacement(
           context,
+<<<<<<< HEAD
           MaterialPageRoute(builder: (context) => const AdminHomePage()),
         );
       } else {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()), // User home screen
+=======
+          MaterialPageRoute(
+              builder: (context) => const HomePage()), // Navigate to HomeScreen
+>>>>>>> 6d6bc9055eaebe7165cd745ec5636888d4c7fa84
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -94,6 +99,7 @@ Future<void> _submitForm() async {
           },
         ),
       ),
+<<<<<<< HEAD
       backgroundColor: isAdmin ? Colors.black : Colors.white, // Toggle background color
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -115,10 +121,27 @@ Future<void> _submitForm() async {
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                   color: isAdmin ? Colors.white : Colors.black, // Toggle text color
+=======
+      backgroundColor: Colors.white,
+      // Fix overflow issue by setting resizeToAvoidBottomInset to true
+      resizeToAvoidBottomInset: true,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Allow scrolling when keyboard appears
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo
+                const Image(
+                  image: AssetImage('assets/Frame.png'), // Ensure correct path
+                  height: 100,
+>>>>>>> 6d6bc9055eaebe7165cd745ec5636888d4c7fa84
                 ),
-              ),
-              const SizedBox(height: 32.0),
+                const SizedBox(height: 16.0),
 
+<<<<<<< HEAD
               // Email Field
               TextFormField(
                 decoration: InputDecoration(
@@ -207,6 +230,103 @@ Future<void> _submitForm() async {
                 ),
               ),
             ],
+=======
+                // App Title
+                const Text(
+                  'DocBook',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 32.0),
+
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Email Field
+                      TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                        onSaved: (value) => email = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Password Field
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          border: const OutlineInputBorder(),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: !isPasswordVisible,
+                        validator: _validatePassword,
+                        onSaved: (value) => password = value,
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Login Button
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
+                          backgroundColor: Colors.teal,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text('Login',
+                            style: TextStyle(fontSize: 18.0)),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Forgot Password Link
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/forgot-password');
+                        },
+                        child: const Text(
+                          'Forgot password',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+
+                      // Don't have an account? Sign Up
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, '/signup'); // Navigate to Sign Up page
+                        },
+                        child: const Text(
+                          'Don\'t have an account? Join us',
+                          style: TextStyle(color: Colors.teal),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+>>>>>>> 6d6bc9055eaebe7165cd745ec5636888d4c7fa84
           ),
         ),
       ),

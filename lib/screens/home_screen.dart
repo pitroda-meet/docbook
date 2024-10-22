@@ -26,7 +26,8 @@ class HomePage extends StatelessWidget {
                 // Navigate to the Profile page
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
+                  MaterialPageRoute(
+                      builder: (context) => const ProfileScreen()),
                 );
               },
               child: CircleAvatar(
@@ -161,7 +162,8 @@ class HomePage extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(15)),
                   image: DecorationImage(
                     image: AssetImage(imagePath),
                     fit: BoxFit.cover,
@@ -176,7 +178,8 @@ class HomePage extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   Text(
                     specialization,

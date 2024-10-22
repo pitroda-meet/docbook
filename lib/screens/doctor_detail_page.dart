@@ -7,7 +7,8 @@ class DoctorDetailPage extends StatelessWidget {
   final String specialization;
   final String imagePath;
 
-  const DoctorDetailPage({super.key, 
+  const DoctorDetailPage({
+    super.key,
     required this.doctorName,
     required this.specialization,
     required this.imagePath,

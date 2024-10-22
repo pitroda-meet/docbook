@@ -1,3 +1,4 @@
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -54,6 +55,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
         ),
       ),
+<<<<<<< HEAD
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         type: BottomNavigationBarType.fixed,
@@ -103,6 +105,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         backgroundColor: Colors.white,
         elevation: 8,
       ),
+=======
+      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
+>>>>>>> 6d6bc9055eaebe7165cd745ec5636888d4c7fa84
     );
   }
 
