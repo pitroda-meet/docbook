@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
 
 class EnterCodeScreen extends StatefulWidget {
   const EnterCodeScreen({super.key});
@@ -9,9 +8,6 @@ class EnterCodeScreen extends StatefulWidget {
 }
 
 class _EnterCodeScreenState extends State<EnterCodeScreen> {
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Initialize Firebase Auth
-
-  // Controllers for each digit
   final _digit1Controller = TextEditingController();
   final _digit2Controller = TextEditingController();
   final _digit3Controller = TextEditingController();
@@ -19,7 +15,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  // Validate if all fields are filled with exactly 1 digit
   String? _validateCode() {
     if (_digit1Controller.text.isEmpty ||
         _digit2Controller.text.isEmpty ||
@@ -30,16 +25,12 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     return null;
   }
 
-  // Function to verify the entered code
   Future<void> _verifyCode() async {
     String code = _digit1Controller.text +
         _digit2Controller.text +
         _digit3Controller.text +
         _digit4Controller.text;
 
-    // Ideally, you should verify the code received via email here.
-    // For now, we will simulate a successful verification for demonstration.
-    // Replace the following line with your actual verification logic.
     bool isCodeValid = await _verifyEmailCode(code);
 
     if (isCodeValid) {
@@ -47,8 +38,11 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         content: Text('Code verified successfully.'),
       ));
 
-      // Navigate to the ResetPasswordScreen
-      Navigator.pushNamed(context, '/reset-password');
+      Navigator.pushNamed(
+        context,
+        '/reset-password',
+        arguments: code,
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Invalid code. Please try again.'),
@@ -56,10 +50,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     }
   }
 
-  // Simulate code verification logic
   Future<bool> _verifyEmailCode(String code) async {
-    // TODO: Implement your actual code verification logic here
-    // This is just a placeholder for demonstration purposes
     return Future.delayed(const Duration(seconds: 1), () => code == "1234");
   }
 
@@ -71,7 +62,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navigate back
+            Navigator.pop(context);
           },
         ),
       ),
@@ -81,7 +72,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // App Title
             const Text(
               'Enter 4-Digit Code',
               style: TextStyle(
@@ -91,8 +81,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               ),
             ),
             const SizedBox(height: 32.0),
-
-            // Instruction Text
             const Text(
               'Enter the 4-digit code that you received on your email.',
               style: TextStyle(
@@ -101,8 +89,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               ),
             ),
             const SizedBox(height: 16.0),
-
-            // 4-Digit Code Input Fields in Squares
             Form(
               key: _formKey,
               child: Row(
@@ -116,12 +102,10 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               ),
             ),
             const SizedBox(height: 24.0),
-
-            // Verify Button
             ElevatedButton(
               onPressed: () {
                 if (_validateCode() == null) {
-                  _verifyCode(); // Call the verify function
+                  _verifyCode();
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text(_validateCode() ?? ''),
@@ -151,7 +135,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     );
   }
 
-  // Function to build a square TextFormField for each digit
   Widget _buildDigitTextField(TextEditingController controller) {
     return SizedBox(
       width: 60,
@@ -165,10 +148,12 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
         style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
         keyboardType: TextInputType.number,
-        maxLength: 1, // Only allow one character per box
+        maxLength: 1,
         onChanged: (value) {
           if (value.length == 1) {
             FocusScope.of(context).nextFocus(); // Move to next input
+          } else if (value.isEmpty) {
+            FocusScope.of(context).previousFocus(); // Move to previous input
           }
         },
       ),

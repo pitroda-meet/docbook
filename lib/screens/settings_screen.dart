@@ -27,8 +27,7 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        const ProfileScreen()), // Ensure const constructor
+                    builder: (context) => const ProfileScreen()), // Ensure const constructor
               );
             },
           ),
@@ -36,11 +35,12 @@ class SettingsScreen extends StatelessWidget {
             leading: const Icon(Icons.lock),
             title: const Text('Change Password'),
             onTap: () {
+              // Assuming resetCode will be passed here dynamically
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        const ResetPasswordScreen()), // Ensure const constructor
+                  builder: (context) => const ResetPasswordScreen(resetCode: ''), // Pass the resetCode dynamically if needed
+                ),
               );
             },
           ),
@@ -51,8 +51,7 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        const AboutUsScreen()), // Ensure const constructor
+                    builder: (context) => const AboutUsScreen()), // Ensure const constructor
               );
             },
           ),
@@ -63,14 +62,13 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        const PatientDetailsScreen()), // Ensure const constructor
+                    builder: (context) => const PatientDetailsScreen()), // Ensure const constructor
               );
             },
           ),
         ],
       ),
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 3),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 3, onTabTapped: (int value) {  },),
     );
   }
 }

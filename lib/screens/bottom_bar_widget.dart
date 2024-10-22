@@ -1,13 +1,18 @@
-import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'appointments_page.dart';
-import 'category_page.dart'; // Import the category page
+import 'category_page.dart';
 import 'settings_screen.dart';
+import 'home_screen.dart';
 
 class BottomBarWidget extends StatelessWidget {
   final int currentIndex;
+  final ValueChanged<int> onTabTapped;
 
-  const BottomBarWidget({super.key, required this.currentIndex});
+  const BottomBarWidget({
+    super.key,
+    required this.currentIndex,
+    required this.onTabTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,29 +24,8 @@ class BottomBarWidget extends StatelessWidget {
       showSelectedLabels: false,
       showUnselectedLabels: false,
       onTap: (index) {
-        if (index == 0) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        } else if (index == 1) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AppointmentsPage()),
-          );
-        } else if (index == 2) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    const CategoryPage(categoryName: 'All Categories')),
-          );
-        } else if (index == 3) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const SettingsScreen()),
-          );
-        }
+        onTabTapped(index); // Use the onTabTapped callback
+        _onTabSelected(context, index); // Handle navigation here
       },
       items: const [
         BottomNavigationBarItem(
@@ -64,5 +48,37 @@ class BottomBarWidget extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 8,
     );
+  }
+
+  void _onTabSelected(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        break;
+      case 1:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AppointmentsPage()),
+        );
+        break;
+      case 2:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                const CategoryPage(categoryName: 'All Categories'),
+          ),
+        );
+        break;
+      case 3:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsScreen()),
+        );
+        break;
+    }
   }
 }

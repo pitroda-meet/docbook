@@ -124,7 +124,7 @@ class DoctorDetailPage extends StatelessWidget {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 0, onTabTapped: (int value) {  },),
     );
   }
 

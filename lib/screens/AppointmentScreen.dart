@@ -1,19 +1,15 @@
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-// Import the detail page
-
-// class AppointmentApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       home: AppointmentScreen(),
-//     );
-//   }
-// }
 
 class AppointmentScreen extends StatefulWidget {
-  const AppointmentScreen({super.key});
+  const AppointmentScreen({
+    super.key, 
+    required String doctorName, 
+    required String specialization, 
+    required DateTime selectedDate, 
+    required TimeOfDay selectedTime,
+  });
 
   @override
   _AppointmentScreenState createState() => _AppointmentScreenState();
@@ -23,8 +19,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime _selectedDay = DateTime.now();
   TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
   int _selectedReminder = 25;
-
-  int _currentIndex = 1; // Default to Appointments screen
+  int _currentIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +63,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         showUnselectedLabels: false,
         onTap: (index) {
           setState(() {
-            _currentIndex = index; // Update the current index
+            _currentIndex = index;
           });
-          // Handle navigation based on the index
           switch (index) {
             case 0:
               Navigator.pushReplacement(
@@ -79,13 +73,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               );
               break;
             case 1:
-              // Stay on the current Appointment screen
               break;
             case 2:
-              // Navigate to Dashboard screen (create this screen)
+              // Handle other screens
               break;
             case 3:
-              // Navigate to Settings screen (create this screen)
+              // Handle other screens
               break;
           }
         },
@@ -157,8 +150,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Available Time',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text('Available Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         SizedBox(height: screenWidth * 0.02),
         Wrap(
           spacing: screenWidth * 0.02,
@@ -218,8 +210,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Reminder Me Before',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text('Reminder Me Before', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         SizedBox(height: screenWidth * 0.02),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -235,8 +226,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 width: screenWidth * 0.15,
                 padding: EdgeInsets.symmetric(vertical: screenWidth * 0.015),
                 decoration: BoxDecoration(
-                  color:
-                      isSelected ? Colors.teal : Colors.teal.withOpacity(0.1),
+                  color: isSelected ? Colors.teal : Colors.teal.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
@@ -261,7 +251,11 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Center(
       child: ElevatedButton(
         onPressed: () {
-          // Handle confirmation action
+          // Navigate to AppointmentDetailScreen when Confirm is clicked
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AppointmentDetailScreen()),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal,
@@ -272,6 +266,26 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           minimumSize: Size(screenWidth * 0.4, screenWidth * 0.12),
         ),
         child: const Text('Confirm', style: TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+}
+
+class AppointmentDetailScreen extends StatelessWidget {
+  const AppointmentDetailScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Appointment Details'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Text(
+          'Appointment confirmed! Your details will appear here.',
+          style: TextStyle(fontSize: 18, color: Colors.teal),
+        ),
       ),
     );
   }

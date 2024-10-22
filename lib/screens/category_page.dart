@@ -25,7 +25,7 @@ class CategoryPage extends StatelessWidget {
           _buildCategoryCard(context, 'Heart', Icons.favorite),
         ],
       ),
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 2),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 2, onTabTapped: (int value) {  },),
     );
   }
 

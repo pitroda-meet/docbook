@@ -1,6 +1,6 @@
-import 'package:docbook/screens/bottom_bar_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-// Import the HomePage
+import 'bottom_bar_widget.dart';
 
 class AppointmentsPage extends StatelessWidget {
   const AppointmentsPage({super.key});
@@ -14,32 +14,40 @@ class AppointmentsPage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            _buildAppointmentCard(
-              'Dr. Anubhav (Dermatologist)',
-              'Aug 25, 2024',
-              '2:00 PM',
-            ),
-            _buildAppointmentCard(
-              'Dr. Shreya (Cardiologist)',
-              'Aug 25, 2024',
-              '2:00 PM',
-            ),
-            _buildAppointmentCard(
-              'Dr. Meenakshi (Gynaecologist)',
-              'Aug 25, 2024',
-              '2:00 PM',
-            ),
-            _buildAppointmentCard(
-              'Dr. Yash (Orthopedic)',
-              'Aug 25, 2024',
-              '2:00 PM',
-            ),
-          ],
+        child: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('appointments').snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return const Center(child: Text('Error loading appointments.'));
+            }
+
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text('No appointments found.'));
+            }
+
+            // List of appointments from Firestore
+            var appointments = snapshot.data!.docs;
+
+            return ListView.builder(
+              itemCount: appointments.length,
+              itemBuilder: (context, index) {
+                var appointment = appointments[index].data() as Map<String, dynamic>;
+
+                return _buildAppointmentCard(
+                  appointment['doctor'] ?? 'Unknown Doctor',
+                  appointment['date'] ?? 'Unknown Date',
+                  appointment['time'] ?? 'Unknown Time',
+                );
+              },
+            );
+          },
         ),
       ),
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 1),
+      bottomNavigationBar: BottomBarWidget(currentIndex: 1, onTabTapped: (int value) {  },),
     );
   }
 

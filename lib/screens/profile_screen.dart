@@ -13,9 +13,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String name = "";
-  String email = "";
-  String phone = ""; // This will remain for input
+  String name = "";  // Name field may or may not exist
+  String email = ""; // This should always be available
+  String phone = ""; // Phone field may or may not exist
 
   @override
   void initState() {
@@ -27,22 +27,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _fetchUserData() async {
     try {
       User? user = _auth.currentUser; // Get the current user
-      if (user != null) {
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users') // Ensure this matches your Firestore structure
-            .doc(user.uid) // Use the user's UID
-            .get();
+      if (user == null) {
+        print("User is not logged in.");
+        return; // Handle if user is not logged in
+      }
 
-        if (userDoc.exists) {
+      // Fetch the user's document from Firestore under collection 'userid1'
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await _firestore
+          .collection('userid1') // Use the specific collection ID 'userid1'
+          .doc(user.uid) // Use the user's UID to fetch their specific data
+          .get();
+
+      if (userDoc.exists) {
+        // Check the retrieved data
+        final data = userDoc.data();
+        if (data != null) {
           setState(() {
-            name = userDoc['name'] ?? ''; // Retrieve name
-            email = userDoc['email'] ?? ''; // Retrieve email
-            // phone = userDoc['phone'] ?? ''; // Optionally set phone only if exists
+            name = data['name'] ?? ''; // Retrieve name if exists, otherwise empty
+            email = data['email'] ?? ''; // Retrieve email, should always exist
+            phone = data['phone'] ?? ''; // Retrieve phone if exists, otherwise empty
           });
+          print("Fetched user data: $data");
+        } else {
+          print("No data found in user document.");
         }
+      } else {
+        print("User document does not exist.");
       }
     } catch (e) {
       // Handle error if fetching data fails
+      print('Error fetching user data: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error fetching user data: $e')),
       );
@@ -54,10 +68,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       User? user = _auth.currentUser;
       if (user != null) {
-        await _firestore.collection('users').doc(user.uid).update({
-          'name': name,
-          'email': email,
-          'phone': phone.isNotEmpty ? phone : FieldValue.delete(), // Only update phone if it's not empty
+        await _firestore.collection('userid1').doc(user.uid).update({ // Use 'userid1' for updates
+          'name': name.isNotEmpty ? name : FieldValue.delete(), // Only update if not empty
+          'email': email, // Always update email if needed
+          'phone': phone.isNotEmpty ? phone : FieldValue.delete(), // Only update phone if not empty
         });
 
         // Show success message

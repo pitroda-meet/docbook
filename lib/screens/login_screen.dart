@@ -1,3 +1,4 @@
+import 'package:docbook/screens/AdminHomePage.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart'; // Ensure this path is correct
 import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore package
@@ -15,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
   bool isPasswordVisible = false;
+  bool isAdmin = false; // Toggle for user/admin mode
 
   // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -42,48 +44,43 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Form Submission
-  Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() == true) {
-      _formKey.currentState?.save();
+Future<void> _submitForm() async {
+  if (_formKey.currentState?.validate() == true) {
+    _formKey.currentState?.save();
 
-      try {
-        // Firebase login
-        UserCredential userCredential = await FirebaseAuth.instance
-            .signInWithEmailAndPassword(email: email!, password: password!);
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email!, password: password!);
 
-        // Check if the user's email is verified
-        if (!userCredential.user!.emailVerified) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please verify your email to log in.'),
-            ),
-          );
-          return; // Exit if email is not verified
-        }
+      // Check if the user is an admin or not (example: by checking Firestore roles)
+      DocumentSnapshot userDoc = await _firestore.collection('users')
+          .doc(userCredential.user!.uid).get();
 
-        // Save user information to Firestore
-        await _firestore.collection('users').doc(userCredential.user?.uid).set({
-          'email': email,
-          'loginTime': DateTime.now(),
-        });
+      bool isAdmin = userDoc.get('role') == 'admin';
 
-        // Simulate a login success after validation
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Login Successful'),
-        ));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Login Successful'),
+      ));
 
-        // Redirect to HomeScreen
+      // Navigate based on admin or user
+      if (isAdmin) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()), // Navigate to HomeScreen
+          MaterialPageRoute(builder: (context) => const AdminHomePage()),
         );
-      } on FirebaseAuthException catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Login Failed: ${e.message}'),
-        ));
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()), // User home screen
+        );
       }
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Login Failed: ${e.message}'),
+      ));
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: isAdmin ? Colors.black : Colors.white, // Toggle background color
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -105,7 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               const Image(
                 image: AssetImage('assets/Frame.png'), // Ensure correct path
                 height: 100,
@@ -113,25 +109,31 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16.0),
 
               // App Title
-              const Text(
+              Text(
                 'DocBook',
                 style: TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black,
+                  color: isAdmin ? Colors.white : Colors.black, // Toggle text color
                 ),
               ),
               const SizedBox(height: 32.0),
 
               // Email Field
               TextFormField(
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: isAdmin ? Colors.white : Colors.black, // Toggle label color
+                  ),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: _validateEmail,
                 onSaved: (value) => email = value,
+                style: TextStyle(
+                  color: isAdmin ? Colors.white : Colors.black, // Toggle input text color
+                ),
               ),
               const SizedBox(height: 16.0),
 
@@ -140,9 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: InputDecoration(
                   labelText: 'Password',
                   border: const OutlineInputBorder(),
+                  labelStyle: TextStyle(
+                    color: isAdmin ? Colors.white : Colors.black, // Toggle label color
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                      color: isAdmin ? Colors.white : Colors.black, // Toggle icon color
                     ),
                     onPressed: () {
                       setState(() {
@@ -154,6 +160,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: !isPasswordVisible,
                 validator: _validatePassword,
                 onSaved: (value) => password = value,
+                style: TextStyle(
+                  color: isAdmin ? Colors.white : Colors.black, // Toggle input text color
+                ),
               ),
               const SizedBox(height: 16.0),
 
@@ -162,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: _submitForm,
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                  backgroundColor: Colors.teal,
+                  backgroundColor: isAdmin ? Colors.red : Colors.teal, // Toggle button color
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -176,9 +185,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, '/forgot-password');
                 },
-                child: const Text(
+                child: Text(
                   'Forgot password',
-                  style: TextStyle(color: Colors.teal),
+                  style: TextStyle(
+                    color: isAdmin ? Colors.red : Colors.teal, // Toggle link color
+                  ),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -188,15 +199,34 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () {
                   Navigator.pushNamed(context, '/signup'); // Navigate to Sign Up page
                 },
-                child: const Text(
+                child: Text(
                   'Don\'t have an account? Join us',
-                  style: TextStyle(color: Colors.teal),
+                  style: TextStyle(
+                    color: isAdmin ? Colors.red : Colors.teal, // Toggle link color
+                  ),
                 ),
               ),
             ],
           ),
         ),
       ),
+      // Add a toggle button at the bottom-right corner
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            isAdmin = !isAdmin; // Toggle between User and Admin mode
+          });
+        },
+        backgroundColor: isAdmin ? Colors.red : Colors.teal, // Toggle button color
+        child: Icon(
+          isAdmin ? Icons.person : Icons.admin_panel_settings, // Icon switch for User/Admin
+          color: Colors.white,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Square shape for button
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Position at bottom-right
     );
   }
 }

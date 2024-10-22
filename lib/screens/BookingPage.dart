@@ -7,7 +7,8 @@ class BookingPage extends StatefulWidget {
   final String specialization;
   final String imagePath;
 
-  const BookingPage({super.key, 
+  const BookingPage({
+    super.key,
     required this.doctorName,
     required this.specialization,
     required this.imagePath,
@@ -18,10 +19,12 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
-  final int _currentIndex = 0; // Index for the bottom navigation bar
+  int _currentIndex = 0; // State to keep track of the selected index
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
-  String _selectedGender = 'Male'; // Default gender selection
+  String _selectedGender = 'Male';
+  DateTime _selectedDay = DateTime.now();
+  TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +53,7 @@ class _BookingPageState extends State<BookingPage> {
                     children: [
                       Text(
                         widget.doctorName,
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       Text(
                         widget.specialization,
@@ -157,17 +159,21 @@ class _BookingPageState extends State<BookingPage> {
             // Confirm Booking Button
             ElevatedButton(
               onPressed: () {
-                // Navigate to the AppointmentScreen when the button is pressed
+                // Navigate to AppointmentScreen and pass selected data
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>
-                        const AppointmentScreen(), // Pass necessary data if required
+                    builder: (context) => AppointmentScreen(
+                      doctorName: widget.doctorName,
+                      specialization: widget.specialization,
+                      selectedDate: _selectedDay,
+                      selectedTime: _selectedTime,
+                    ),
                   ),
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // Updated to backgroundColor
+                backgroundColor: Colors.teal,
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
               ),
               child: const Text('Confirm Booking'),
@@ -175,7 +181,14 @@ class _BookingPageState extends State<BookingPage> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomBarWidget(currentIndex: 0),
+      bottomNavigationBar: BottomBarWidget(
+        currentIndex: _currentIndex,
+        onTabTapped: (index) {
+          setState(() {
+            _currentIndex = index; // Update the current index when a tab is selected
+          });
+        },
+      ),
     );
   }
 }
