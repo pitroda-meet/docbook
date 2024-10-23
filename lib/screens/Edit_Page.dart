@@ -1,3 +1,4 @@
+import 'package:docbook/screens/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
 import 'package:docbook/screens/AdminHomePage.dart';
@@ -55,9 +56,15 @@ class _EditPageState extends State<EditPage> {
         MaterialPageRoute(builder: (context) => const AdminHomePage()),
       );
     } else if (index == 1) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const AddPage()),
+      );
+    } else if (index == 2) {
+      // New "Users" Page navigation
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserPage()),
       );
     }
   }

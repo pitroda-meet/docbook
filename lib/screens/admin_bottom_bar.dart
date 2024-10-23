@@ -27,6 +27,11 @@ class _AdminBottomBarState extends State<AdminBottomBar> {
           icon: Icon(Icons.add),
           label: 'Add',
         ),
+        BottomNavigationBarItem(
+          // New Users item
+          icon: Icon(Icons.people),
+          label: 'Users',
+        ),
       ],
       currentIndex: widget.currentIndex,
       selectedItemColor: Colors.teal,
