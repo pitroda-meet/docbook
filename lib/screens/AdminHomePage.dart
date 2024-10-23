@@ -26,9 +26,9 @@ class AdminHomePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildAdminButton(context, 'Manage Appointments', ManageAppointmentsScreen()),
-              _buildAdminButton(context, 'Manage Users', ManageUsersScreen()),
-              _buildAdminButton(context, 'Manage Doctors', ManageDoctorsScreen()),
+              _buildAdminButton(context, 'Manage Appointments', const ManageAppointmentsScreen()),
+              _buildAdminButton(context, 'Manage Users', const ManageUsersScreen()),
+              _buildAdminButton(context, 'Manage Doctors', const ManageDoctorsScreen()),
               const SizedBox(height: 20), // Add some space
               _buildLogoutButton(context), // Add the logout button
             ],
@@ -76,9 +76,9 @@ class AdminHomePage extends StatelessWidget {
   }
 
   void _showLogoutMessage(BuildContext context) {
-    final snackBar = SnackBar(
-      content: const Text('Logged out successfully!'),
-      duration: const Duration(seconds: 2),
+    const snackBar = SnackBar(
+      content: Text('Logged out successfully!'),
+      duration: Duration(seconds: 2),
       behavior: SnackBarBehavior.floating,
       backgroundColor: Colors.green,
     );

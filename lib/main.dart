@@ -1,4 +1,3 @@
-import 'package:docbook/screens/AdminHomePage.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/signup_screen.dart';
@@ -46,8 +45,8 @@ class MyApp extends StatelessWidget {
         // Admin routes
         //'/': (context) => AdminHomePage(), // Update with your home screen widget
         //'/admin-login': (context) => const AdminLoginScreen(), // Ensure this route is correctly defined
-        '/add-doctor': (context) => AddDoctorScreen(), // Admin: Add Doctor
-        '/doctor-list': (context) => DoctorListScreen(), // Admin: Doctor List
+        '/add-doctor': (context) => const AddDoctorScreen(), // Admin: Add Doctor
+        '/doctor-list': (context) => const DoctorListScreen(), // Admin: Doctor List
       },
     );
   }
