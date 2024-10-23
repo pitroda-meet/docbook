@@ -1,5 +1,4 @@
 import 'package:docbook/screens/AdminHomePage.dart'; // Admin home page import
-import 'package:docbook/screens/AdminSignUpScreen.dart'; // Admin Sign Up import
 import 'package:docbook/screens/home_screen.dart'; // Regular user home screen
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   String? email;
   String? password;
   bool isPasswordVisible = false;
-  bool isAdmin = false; // Toggle for admin mode
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
 
@@ -44,18 +42,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Check if email belongs to admin or user
-  Future<String> _getUserRole(String email) async {
-    final adminSnapshot = await _firestore.collection('admins').where('email', isEqualTo: email).get();
-    if (adminSnapshot.docs.isNotEmpty) {
-      return 'admin'; // User is admin
-    }
-
+  Future<String?> _getUserRole(String email) async {
     final userSnapshot = await _firestore.collection('users').where('email', isEqualTo: email).get();
     if (userSnapshot.docs.isNotEmpty) {
-      return 'user'; // User is regular user
+      String role = userSnapshot.docs.first.data()['role'];
+      return role; // Return the role ('admin' or 'user')
     }
-
-    return 'none'; // User not found
+    return null; // No user found in Firestore
   }
 
   // Handle Login Submission
@@ -63,46 +56,78 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState?.validate() == true) {
       _formKey.currentState?.save();
 
+      // Ensure email and password are not null
+      if (email == null || password == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Email and Password cannot be empty.')),
+        );
+        return; // Exit if email or password is null
+      }
+
+      // Debug print for email and password
+      print('Email: $email, Password: $password');
+
       try {
         // Log in with email and password
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email!, password: password!);
 
-        // Get user role
-        String userRole = await _getUserRole(email!);
+        // Get user role from Firestore
+        String? userRole = await _getUserRole(email!);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Login Successful')),
-        );
-
-        // Navigate based on role
-        if (userRole == 'admin') {
-          // Navigate to AdminHomePage
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AdminHomePage(),
-            ),
-          );
-        } else if (userRole == 'user') {
-          // Navigate to HomePage for regular users
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const HomePage(),
-            ),
+        if (userRole == null) {
+          // No user found in Firestore, show appropriate error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('No user found with this email in the database.')),
           );
         } else {
-          // Handle user not found (invalid login)
+          // If user is found, show success message and navigate
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No user found with this email.')),
+            const SnackBar(content: Text('Login Successful')),
           );
+
+          // Navigate based on role
+          if (userRole == 'admin') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AdminHomePage(),
+              ),
+            );
+          } else if (userRole == 'user') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HomePage(),
+              ),
+            );
+          }
         }
       } on FirebaseAuthException catch (e) {
+        // Handle login failure
+        String errorMessage;
+
+        // Customize error messages based on error codes
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage = 'No user found for that email.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'Incorrect password. Please try again.';
+            break;
+          case 'invalid-email':
+            errorMessage = 'The email address is not valid.';
+            break;
+          default:
+            errorMessage = 'Login Failed: ${e.message}';
+            break;
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Login Failed: ${e.message}'),
+          content: Text(errorMessage),
         ));
       } catch (e) {
+        // Handle any other errors
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('An error occurred: $e'),
         ));
@@ -122,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
           },
         ),
       ),
-      backgroundColor: isAdmin ? Colors.black : Colors.white, // Toggle background color
+      backgroundColor: Colors.white,
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -137,31 +162,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 100,
                 ),
                 const SizedBox(height: 16.0),
-                Text(
+                const Text(
                   'DocBook',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
-                    color: isAdmin ? Colors.white : Colors.black, // Toggle text color
+                    color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 32.0),
 
                 // Email Field
                 TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
-                    border: const OutlineInputBorder(),
-                    labelStyle: TextStyle(
-                      color: isAdmin ? Colors.white : Colors.black, // Toggle label color
-                    ),
+                    border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: _validateEmail,
                   onSaved: (value) => email = value,
-                  style: TextStyle(
-                    color: isAdmin ? Colors.white : Colors.black, // Toggle input text color
-                  ),
                 ),
                 const SizedBox(height: 16.0),
 
@@ -170,13 +189,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: const OutlineInputBorder(),
-                    labelStyle: TextStyle(
-                      color: isAdmin ? Colors.white : Colors.black, // Toggle label color
-                    ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        color: isAdmin ? Colors.white : Colors.black, // Toggle icon color
+                        color: Colors.black,
                       ),
                       onPressed: () {
                         setState(() {
@@ -188,9 +204,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: !isPasswordVisible,
                   validator: _validatePassword,
                   onSaved: (value) => password = value,
-                  style: TextStyle(
-                    color: isAdmin ? Colors.white : Colors.black, // Toggle input text color
-                  ),
                 ),
                 const SizedBox(height: 16.0),
 
@@ -199,7 +212,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    backgroundColor: isAdmin ? Colors.red : Colors.teal, // Toggle button color
+                    backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -213,11 +226,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   onTap: () {
                     Navigator.pushNamed(context, '/forgot-password');
                   },
-                  child: Text(
-                    'Forgot password',
-                    style: TextStyle(
-                      color: isAdmin ? Colors.red : Colors.teal, // Toggle link color
-                    ),
+                  child: const Text(
+                    'Forgot password?',
+                    style: TextStyle(color: Colors.teal),
                   ),
                 ),
                 const SizedBox(height: 16.0),
@@ -225,24 +236,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Sign Up Link
                 GestureDetector(
                   onTap: () {
-                    if (isAdmin) {
-                      // If admin mode, navigate to AdminSignUpScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AdminSignUpScreen(),
-                        ),
-                      );
-                    } else {
-                      // Regular user sign-up page navigation
-                      Navigator.pushNamed(context, '/signup'); // Navigate to User Sign Up page
-                    }
+                    Navigator.pushNamed(context, '/signup'); // Navigate to User Sign Up page
                   },
-                  child: Text(
+                  child: const Text(
                     'Don\'t have an account? Join us',
-                    style: TextStyle(
-                      color: isAdmin ? Colors.red : Colors.teal, // Toggle link color
-                    ),
+                    style: TextStyle(color: Colors.teal),
                   ),
                 ),
               ],
@@ -250,23 +248,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ),
-      // Admin/User Toggle Button
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            isAdmin = !isAdmin; // Toggle between User and Admin mode
-          });
-        },
-        backgroundColor: isAdmin ? Colors.red : Colors.teal, // Toggle button color
-        child: Icon(
-          isAdmin ? Icons.admin_panel_settings : Icons.person, // Icon switch for User/Admin
-          color: Colors.white,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat, // Bottom-right position
     );
   }
 }

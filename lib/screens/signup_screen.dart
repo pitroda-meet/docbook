@@ -63,18 +63,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         await _firestore.collection('users').doc(userCredential.user?.uid).set({
           'name': name,
           'email': email,
+          'role': 'user', // Set default role as 'user'
           'signupTime': FieldValue.serverTimestamp(),
+          'isVerified': false, // Track if user has verified their email
         });
 
-        // Send verification email with custom content
-        await userCredential.user?.sendEmailVerification(ActionCodeSettings(
-          url:
-              'https://batch-a-project.firebaseapp.com/__/auth/action?mode=action&oobCode=code',
-          handleCodeInApp: true,
-          androidPackageName: 'com.example.docbook', // Android package
-          iOSBundleId: 'com.example.docbook', // iOS bundle
-          androidInstallApp: true,
-        ));
+        // Send verification email
+        await userCredential.user?.sendEmailVerification();
 
         // Display confirmation message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -82,7 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               content: Text('Verification email sent. Check your inbox.')),
         );
 
-        // Redirect to login screen or verification instruction screen
+        // Redirect to login screen
         Navigator.pushReplacementNamed(context, '/login');
       } on FirebaseAuthException catch (e) {
         String errorMessage;
@@ -126,11 +121,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      // Fix overflow issue by setting resizeToAvoidBottomInset to true
       resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: SingleChildScrollView(
-          // Allow scrolling when keyboard appears
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
