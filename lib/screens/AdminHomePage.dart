@@ -76,7 +76,7 @@ class _AdminHomePageState extends State<AdminHomePage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20), // Add some space
+              const SizedBox(height: 20),
             ],
           ),
         ),
