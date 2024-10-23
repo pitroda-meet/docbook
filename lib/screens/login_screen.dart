@@ -17,7 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String? password;
   bool isPasswordVisible = false;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firestore instance
 
   // Email Validator
   String? _validateEmail(String? value) {
@@ -43,7 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Check if email belongs to admin or user
   Future<String?> _getUserRole(String email) async {
-    final userSnapshot = await _firestore.collection('users').where('email', isEqualTo: email).get();
+    final userSnapshot = await _firestore
+        .collection('users')
+        .where('email', isEqualTo: email)
+        .get();
     if (userSnapshot.docs.isNotEmpty) {
       String role = userSnapshot.docs.first.data()['role'];
       return role; // Return the role ('admin' or 'user')
@@ -78,7 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (userRole == null) {
           // No user found in Firestore, show appropriate error message
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('No user found with this email in the database.')),
+            const SnackBar(
+                content:
+                    Text('No user found with this email in the database.')),
           );
         } else {
           // If user is found, show success message and navigate
@@ -191,7 +197,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.black,
                       ),
                       onPressed: () {
@@ -211,7 +219,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -236,7 +245,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Sign Up Link
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/signup'); // Navigate to User Sign Up page
+                    Navigator.pushNamed(
+                        context, '/signup'); // Navigate to User Sign Up page
                   },
                   child: const Text(
                     'Don\'t have an account? Join us',
