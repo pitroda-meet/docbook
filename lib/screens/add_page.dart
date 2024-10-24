@@ -1,3 +1,4 @@
+import 'package:docbook/screens/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage
@@ -134,9 +135,15 @@ class _AddPageState extends State<AddPage> {
         MaterialPageRoute(builder: (context) => const AdminHomePage()),
       );
     } else if (index == 1) {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const AddPage()),
+      );
+    } else if (index == 2) {
+      // New "Users" Page navigation
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const UserPage()),
       );
     }
   }

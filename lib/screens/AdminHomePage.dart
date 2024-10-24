@@ -1,5 +1,6 @@
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
+import 'package:docbook/screens/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:docbook/screens/login_screen.dart';
@@ -15,21 +16,27 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   int _selectedIndex = 0;
 
+  // Update the _onItemTapped method to properly handle navigation
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    // Navigate based on the tapped index
     if (index == 0) {
+      // Stay on the home page
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AdminHomePage()),
       );
     } else if (index == 1) {
-      Navigator.push(
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AddPage()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const UserPage()),
       );
     }
   }
