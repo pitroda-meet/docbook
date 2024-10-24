@@ -23,8 +23,8 @@ class _BookingPageState extends State<BookingPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   String _selectedGender = 'Male';
-  DateTime _selectedDay = DateTime.now();
-  TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
+  final DateTime _selectedDay = DateTime.now();
+  final TimeOfDay _selectedTime = const TimeOfDay(hour: 14, minute: 0);
 
   @override
   Widget build(BuildContext context) {

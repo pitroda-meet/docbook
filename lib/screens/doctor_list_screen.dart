@@ -4,15 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
   
 
 class DoctorListScreen extends StatelessWidget {
+  const DoctorListScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Doctor List')),
+      appBar: AppBar(title: const Text('Doctor List')),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           var doctors = snapshot.data!.docs.map((doc) => Doctor.fromJson(doc.data() as Map<String, dynamic>)).toList();
           return ListView.builder(

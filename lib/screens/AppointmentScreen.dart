@@ -1,5 +1,4 @@
 import 'package:docbook/screens/bottom_bar_widget.dart';
-import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -116,7 +115,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Available Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -176,7 +175,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text('Reminder Me Before', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: reminders.map((minutes) {
@@ -246,7 +245,7 @@ class AppointmentDetailScreen extends StatelessWidget {
         title: const Text('Appointment Details'),
         backgroundColor: Colors.teal,
       ),
-      body: Center(
+      body: const Center(
         child: Text(
           'Appointment confirmed! Your details will appear here.',
           style: TextStyle(fontSize: 18, color: Colors.teal),

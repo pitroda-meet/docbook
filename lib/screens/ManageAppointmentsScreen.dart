@@ -10,8 +10,8 @@ class ManageAppointmentsScreen extends StatelessWidget {
         title: const Text('Manage Appointments'),
         backgroundColor: Colors.deepOrange,
       ),
-      body: Center(
-        child: const Text('Manage Appointments Page', style: TextStyle(fontSize: 20)),
+      body: const Center(
+        child: Text('Manage Appointments Page', style: TextStyle(fontSize: 20)),
       ),
     );
   }

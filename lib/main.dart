@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 import 'package:docbook/screens/AdminHomePage.dart';
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/edit_page.dart';
->>>>>>> 148356394bd0bae492a2ec6ef3a445f2f99d2456
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/signup_screen.dart';
@@ -43,24 +40,13 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/enter-code': (context) => const EnterCodeScreen(),
-<<<<<<< HEAD
         '/reset-password': (context) => const ResetPasswordScreen(resetCode: ''),
-        '/home': (context) => const HomePage(), // Home screen after login
+        '/home': (context) => const HomePage(),
 
         // Admin routes
-        //'/': (context) => AdminHomePage(), // Update with your home screen widget
-        //'/admin-login': (context) => const AdminLoginScreen(), // Ensure this route is correctly defined
-        '/add-doctor': (context) => const AddDoctorScreen(), // Admin: Add Doctor
-        '/doctor-list': (context) => const DoctorListScreen(), // Admin: Doctor List
-=======
-        '/reset-password': (context) =>
-            const ResetPasswordScreen(resetCode: ''),
-        '/home': (context) => const HomePage(),
-        '/admin-home': (context) => const AdminHomePage(), // Update route name
-        '/add-doctor': (context) => const AddPage(),
-        '/edit': (context) => const EditPage(
-            doctorName: '', specialization: ''), // Update constructor call
->>>>>>> 148356394bd0bae492a2ec6ef3a445f2f99d2456
+        '/admin-home': (context) => const AdminHomePage(), // Admin dashboard
+        '/add-doctor': (context) => const AddPage(), // Admin: Add Doctor
+        '/edit': (context) => const EditPage(doctorName: '', specialization: ''), // Admin: Edit Doctor
       },
     );
   }

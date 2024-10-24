@@ -62,29 +62,22 @@ class _AdminHomePageState extends State<AdminHomePage> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-<<<<<<< HEAD
-              _buildAdminButton(context, 'Manage Appointments', const ManageAppointmentsScreen()),
-              _buildAdminButton(context, 'Manage Users', const ManageUsersScreen()),
-              _buildAdminButton(context, 'Manage Doctors', const ManageDoctorsScreen()),
-              const SizedBox(height: 20), // Add some space
-              _buildLogoutButton(context), // Add the logout button
-=======
               Expanded(
                 child: ListView(
                   children: [
                     _buildDoctorCard(context, 'Dr. Amit',
-                        'Specialist Cardiologist', 'assets/image 1.png'),
+                        'Specialist Cardiologist', 'assets/image1.png'),
                     _buildDoctorCard(context, 'Dr. Shreya',
-                        'Specialist Gynaecologist', 'assets/image 2.png'),
+                        'Specialist Gynaecologist', 'assets/image2.png'),
                     _buildDoctorCard(context, 'Dr. Yash',
-                        'Specialist Orthopaedic', 'assets/image 3.png'),
+                        'Specialist Orthopaedic', 'assets/image3.png'),
                     _buildDoctorCard(context, 'Dr. Meenakshi',
-                        'Specialist Dentist', 'assets/image 4.png'),
+                        'Specialist Dentist', 'assets/image4.png'),
                   ],
                 ),
               ),
               const SizedBox(height: 20),
->>>>>>> 148356394bd0bae492a2ec6ef3a445f2f99d2456
+              _buildLogoutButton(context), // Added logout button here
             ],
           ),
         ),
@@ -204,5 +197,15 @@ class _AdminHomePageState extends State<AdminHomePage> {
       backgroundColor: Colors.green,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => _logout(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.redAccent,
+      ),
+      child: const Text('Logout'),
+    );
   }
 }

@@ -10,8 +10,8 @@ class ManageDoctorsScreen extends StatelessWidget {
         title: const Text('Manage Doctors'),
         backgroundColor: Colors.deepOrange,
       ),
-      body: Center(
-        child: const Text('Manage Doctors Page', style: TextStyle(fontSize: 20)),
+      body: const Center(
+        child: Text('Manage Doctors Page', style: TextStyle(fontSize: 20)),
       ),
     );
   }

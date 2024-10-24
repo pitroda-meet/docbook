@@ -10,8 +10,8 @@ class ManageUsersScreen extends StatelessWidget {
         title: const Text('Manage Users'),
         backgroundColor: Colors.deepOrange,
       ),
-      body: Center(
-        child: const Text('Manage Users Page', style: TextStyle(fontSize: 20)),
+      body: const Center(
+        child: Text('Manage Users Page', style: TextStyle(fontSize: 20)),
       ),
     );
   }
