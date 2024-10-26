@@ -1,10 +1,11 @@
+import 'package:docbook/screens/Edit_Page.dart';
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
-import 'package:docbook/screens/user_page.dart';
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:docbook/screens/login_screen.dart';
-import 'package:docbook/screens/edit_page.dart';
+import 'package:docbook/screens/user_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -16,84 +17,34 @@ class AdminHomePage extends StatefulWidget {
 class _AdminHomePageState extends State<AdminHomePage> {
   int _selectedIndex = 0;
 
-  // Update the _onItemTapped method to properly handle navigation
+  Stream<QuerySnapshot> getDoctorsStream() {
+    return FirebaseFirestore.instance.collection('doctors').snapshots();
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
     if (index == 0) {
-      // Stay on the home page
+      // Navigate to AdminHomePage
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AdminHomePage()),
       );
     } else if (index == 1) {
-      Navigator.pushReplacement(
+      // Stay on AddPage
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const AddPage()),
       );
     } else if (index == 2) {
-      Navigator.pushReplacement(
+      // Navigate to UserPage
+      Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const UserPage()),
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return true; // Allow back navigation
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Admin Dashboard',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          backgroundColor: Colors.teal,
-          elevation: 0,
-          toolbarHeight: 100,
-          actions: [
-            _buildPopupMenu(context),
-          ],
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(25),
-            ),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  children: [
-                    _buildDoctorCard(context, 'Dr. Amit',
-                        'Specialist Cardiologist', 'assets/image1.png'),
-                    _buildDoctorCard(context, 'Dr. Shreya',
-                        'Specialist Gynaecologist', 'assets/image2.png'),
-                    _buildDoctorCard(context, 'Dr. Yash',
-                        'Specialist Orthopaedic', 'assets/image3.png'),
-                    _buildDoctorCard(context, 'Dr. Meenakshi',
-                        'Specialist Dentist', 'assets/image4.png'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildLogoutButton(context), // Added logout button here
-            ],
-          ),
-        ),
-        bottomNavigationBar: AdminBottomBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-        ),
-      ),
-    );
   }
 
   Widget _buildPopupMenu(BuildContext context) {
@@ -115,8 +66,55 @@ class _AdminHomePageState extends State<AdminHomePage> {
     );
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Admin Dashboard'),
+        backgroundColor: Colors.teal,
+        actions: [_buildPopupMenu(context)],
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: getDoctorsStream(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData)
+                    return const CircularProgressIndicator();
+                  final doctors = snapshot.data!.docs;
+
+                  return ListView.builder(
+                    itemCount: doctors.length,
+                    itemBuilder: (context, index) {
+                      var doctorData =
+                          doctors[index].data() as Map<String, dynamic>;
+                      return _buildDoctorCard(
+                        context,
+                        doctorData['name'] ?? 'Unknown',
+                        doctorData['specialist'] ?? 'Unknown',
+                        doctorData['image_url'] ?? 'default_image.png',
+                        doctors[index].id,
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: AdminBottomBar(
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
   Widget _buildDoctorCard(BuildContext context, String doctorName,
-      String specialization, String imagePath) {
+      String specialization, String imageUrl, String doctorId) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
       elevation: 5,
@@ -126,11 +124,10 @@ class _AdminHomePageState extends State<AdminHomePage> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundImage: AssetImage(imagePath),
+              backgroundImage: NetworkImage(imageUrl),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -150,36 +147,29 @@ class _AdminHomePageState extends State<AdminHomePage> {
                 ],
               ),
             ),
-            Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditPage(
-                          doctorName: doctorName,
-                          specialization: specialization,
-                        ),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditPage(doctorId: doctorId),
                   ),
-                  child: const Text('Edit'),
-                ),
-                const SizedBox(height: 5),
-                ElevatedButton(
-                  onPressed: () {
-                    // Handle delete
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.redAccent,
-                  ),
-                  child: const Text('Delete'),
-                ),
-              ],
+                );
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              child: const Text('Edit'),
+            ),
+            const SizedBox(width: 5),
+            ElevatedButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('doctors')
+                    .doc(doctorId)
+                    .delete();
+              },
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+              child: const Text('Delete'),
             ),
           ],
         ),
@@ -188,12 +178,44 @@ class _AdminHomePageState extends State<AdminHomePage> {
   }
 
   void _logout(BuildContext context) async {
-    await FirebaseAuth.instance.signOut();
-    _showLogoutMessage(context);
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to log out?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // No
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true), // Yes
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
     );
+
+    if (shouldLogout == true) {
+      try {
+        await FirebaseAuth.instance.signOut();
+        _showLogoutMessage(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginScreen()),
+        );
+      } catch (e) {
+        // Handle error (e.g., show an error message)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error logging out: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _showLogoutMessage(BuildContext context) {
@@ -204,15 +226,5 @@ class _AdminHomePageState extends State<AdminHomePage> {
       backgroundColor: Colors.green,
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  Widget _buildLogoutButton(BuildContext context) {
-    return ElevatedButton(
-      onPressed: () => _logout(context),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.redAccent,
-      ),
-      child: const Text('Logout'),
-    );
   }
 }
