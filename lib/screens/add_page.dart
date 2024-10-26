@@ -1,11 +1,11 @@
 import 'package:docbook/screens/user_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart'; // Firebase Storage
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
 import 'package:docbook/screens/AdminHomePage.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io'; // For file handling
+import 'dart:io';
 
 class AddPage extends StatefulWidget {
   const AddPage({super.key});
@@ -27,28 +27,42 @@ class _AddPageState extends State<AddPage> {
   String? _selectedProfession;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance; // Add Firebase Storage
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   // Method to pick image from gallery
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        print('Picked Image Path: ${pickedFile.path}');
       });
+    } else {
+      print('No image selected.');
     }
   }
 
   // Method to upload image to Firebase Storage
   Future<String?> _uploadImage(File imageFile) async {
     try {
-      String fileName = DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
-      Reference storageReference = _storage.ref().child('doctor_images/$fileName');
+      String fileName =
+          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+      Reference storageReference =
+          _storage.ref().child('doctor_images/$fileName');
+
+      print('Attempting to upload to path: doctor_images/$fileName');
+
       UploadTask uploadTask = storageReference.putFile(imageFile);
-      TaskSnapshot snapshot = await uploadTask;
+      TaskSnapshot snapshot = await uploadTask.whenComplete(() {
+        print('Upload complete');
+      });
+
       String downloadUrl = await snapshot.ref.getDownloadURL();
+      print('Image uploaded successfully. Download URL: $downloadUrl');
       return downloadUrl; // Return the download URL
     } catch (e) {
+      print('Error uploading image: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading image: $e')),
       );
@@ -85,6 +99,8 @@ class _AddPageState extends State<AddPage> {
           );
           return;
         }
+      } else {
+        print('No image selected for upload.');
       }
 
       // Save doctor information to Firestore
@@ -97,7 +113,7 @@ class _AddPageState extends State<AddPage> {
         'category': _selectedCategory,
         'profession': _selectedProfession,
         'gender': _selectedGender,
-        'image_url': imageUrl, // Include image URL in Firestore document
+        'image_url': imageUrl,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -118,6 +134,7 @@ class _AddPageState extends State<AddPage> {
         _selectedProfession = null;
       });
     } catch (e) {
+      print('Error saving doctor data to Firestore: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -169,7 +186,8 @@ class _AddPageState extends State<AddPage> {
                   children: [
                     const Text(
                       'Add New Doctor',
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
 
@@ -249,14 +267,7 @@ class _AddPageState extends State<AddPage> {
                           labelText: 'Category',
                           border: OutlineInputBorder(),
                         ),
-                        items: [
-                          'General Medicine',
-                          'Pediatrics',
-                          'Gynecology',
-                          'Dermatology',
-                          'Cardiology',
-                          'Other',
-                        ]
+                        items: ['Dermatologist', 'Cardiologist', 'Pediatrician']
                             .map((category) => DropdownMenuItem<String>(
                                   value: category,
                                   child: Text(category),
@@ -279,7 +290,7 @@ class _AddPageState extends State<AddPage> {
                           labelText: 'Profession',
                           border: OutlineInputBorder(),
                         ),
-                        items: ['Degree', 'Diploma', 'Other']
+                        items: ['Doctor', 'Nurse', 'Technician']
                             .map((profession) => DropdownMenuItem<String>(
                                   value: profession,
                                   child: Text(profession),
@@ -294,27 +305,26 @@ class _AddPageState extends State<AddPage> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Doctor's Image Section
+                    // Image Picker
                     _image == null
                         ? ElevatedButton(
                             onPressed: _pickImage,
-                            child: const Text('Add Doctor Image'),
+                            child: const Text('Pick Image'),
                           )
                         : Column(
                             children: [
                               Image.file(
                                 _image!,
-                                height: 150,
-                                width: 150,
+                                height: 200,
+                                width: 200,
                                 fit: BoxFit.cover,
                               ),
-                              TextButton(
+                              ElevatedButton(
                                 onPressed: _pickImage,
                                 child: const Text('Change Image'),
                               ),
                             ],
                           ),
-
                     const SizedBox(height: 20),
 
                     // Gender Dropdown
@@ -325,20 +335,12 @@ class _AddPageState extends State<AddPage> {
                           labelText: 'Gender',
                           border: OutlineInputBorder(),
                         ),
-                        items: [
-                          DropdownMenuItem(
-                            value: 'Male',
-                            child: Text('Male'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Female',
-                            child: Text('Female'),
-                          ),
-                          DropdownMenuItem(
-                            value: 'Other',
-                            child: Text('Other'),
-                          ),
-                        ],
+                        items: ['Male', 'Female', 'Other']
+                            .map((gender) => DropdownMenuItem<String>(
+                                  value: gender,
+                                  child: Text(gender),
+                                ))
+                            .toList(),
                         onChanged: (value) {
                           setState(() {
                             _selectedGender = value;
@@ -363,19 +365,8 @@ class _AddPageState extends State<AddPage> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: 'Add Doctor',
-          ),
-        ],
+      bottomNavigationBar: AdminBottomBar(
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.teal,
         onTap: _onItemTapped,
       ),
     );
