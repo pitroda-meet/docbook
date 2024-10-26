@@ -1,4 +1,4 @@
-import 'package:docbook/screens/bottom_bar_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -7,13 +7,15 @@ class AppointmentScreen extends StatefulWidget {
   final String specialization;
   final DateTime selectedDate;
   final TimeOfDay selectedTime;
+  final String patientName;
 
   const AppointmentScreen({
-    super.key, 
-    required this.doctorName, 
-    required this.specialization, 
-    required this.selectedDate, 
+    super.key,
+    required this.doctorName,
+    required this.specialization,
+    required this.selectedDate,
     required this.selectedTime,
+    required this.patientName,
   });
 
   @override
@@ -24,13 +26,50 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   late DateTime _selectedDay;
   late TimeOfDay _selectedTime;
   int _selectedReminder = 25;
-  final int _currentIndex = 1;
+  int _currentIndex = 1; // Track current index for BottomNavigationBar
 
   @override
   void initState() {
     super.initState();
     _selectedDay = widget.selectedDate;
     _selectedTime = widget.selectedTime;
+  }
+
+  // Function to save the appointment details in Firestore
+  Future<void> _saveAppointment() async {
+    try {
+      final appointmentTime = DateTime(
+        _selectedDay.year,
+        _selectedDay.month,
+        _selectedDay.day,
+        _selectedTime.hour,
+        _selectedTime.minute,
+      );
+
+      final appointmentData = {
+        "doctorName": widget.doctorName,
+        "specialization": widget.specialization,
+        "appointmentDate": _selectedDay,
+        "appointmentTime": appointmentTime,
+        "reminderBefore": _selectedReminder,
+        "patientName": widget.patientName,
+        "status": "confirmed", 
+        "createdAt": Timestamp.now(),
+      };
+
+      await FirebaseFirestore.instance.collection('appointments').add(appointmentData);
+
+      // Navigate to AppointmentDetailScreen (can be customized)
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AppointmentDetailScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to save appointment: $e'),
+        backgroundColor: Colors.red,
+      ));
+    }
   }
 
   @override
@@ -66,7 +105,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 1, onTabTapped: (int value) {  },),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        backgroundColor: Colors.teal,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white.withOpacity(0.6),
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            label: 'Appointments',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+      ),
     );
   }
 
@@ -214,27 +273,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   Widget _buildConfirmButton() {
     return Center(
       child: ElevatedButton(
-        onPressed: () {
-          // Navigate to AppointmentDetailScreen when Confirm is clicked
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AppointmentDetailScreen()),
-          );
-        },
+        onPressed: _saveAppointment,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.teal,
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          minimumSize: const Size(150, 48),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
-        child: const Text('Confirm', style: TextStyle(fontSize: 16)),
+        child: const Text(
+          'Confirm Appointment',
+          style: TextStyle(fontSize: 16),
+        ),
       ),
     );
   }
+
+  // Function to handle bottom navigation tab changes
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    switch (index) {
+      case 0:
+        Navigator.pushReplacementNamed(context, '/home'); // Navigate to home screen
+        break;
+      case 1:
+        // Currently on Appointments, so no need to navigate
+        break;
+      case 2:
+        Navigator.pushReplacementNamed(context, '/profile'); // Navigate to profile screen
+        break;
+    }
+  }
 }
 
+// Placeholder for AppointmentDetailScreen
 class AppointmentDetailScreen extends StatelessWidget {
   const AppointmentDetailScreen({super.key});
 
@@ -243,13 +315,9 @@ class AppointmentDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Appointment Details'),
-        backgroundColor: Colors.teal,
       ),
       body: const Center(
-        child: Text(
-          'Appointment confirmed! Your details will appear here.',
-          style: TextStyle(fontSize: 18, color: Colors.teal),
-        ),
+        child: Text('Appointment details will be shown here.'),
       ),
     );
   }
