@@ -6,6 +6,7 @@ import 'package:docbook/screens/user_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase Storage
 
 class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
@@ -27,19 +28,16 @@ class _AdminHomePageState extends State<AdminHomePage> {
     });
 
     if (index == 0) {
-      // Navigate to AdminHomePage
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const AdminHomePage()),
       );
     } else if (index == 1) {
-      // Stay on AddPage
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const AddPage()),
       );
     } else if (index == 2) {
-      // Navigate to UserPage
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const UserPage()),
@@ -161,11 +159,38 @@ class _AdminHomePageState extends State<AdminHomePage> {
             ),
             const SizedBox(width: 5),
             ElevatedButton(
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('doctors')
-                    .doc(doctorId)
-                    .delete();
+              onPressed: () async {
+                try {
+                  // Delete image from Firebase Storage
+                  if (imageUrl != 'default_image.png') {
+                    // Avoid deleting a default image
+                    await FirebaseStorage.instance
+                        .refFromURL(imageUrl)
+                        .delete();
+                  }
+
+                  // Delete Firestore document
+                  await FirebaseFirestore.instance
+                      .collection('doctors')
+                      .doc(doctorId)
+                      .delete();
+
+                  // Show confirmation message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Doctor deleted successfully.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  // Show error message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error deleting doctor: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               style:
                   ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
@@ -186,11 +211,11 @@ class _AdminHomePageState extends State<AdminHomePage> {
           content: const Text('Are you sure you want to log out?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false), // No
+              onPressed: () => Navigator.of(context).pop(false),
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () => Navigator.of(context).pop(true), // Yes
+              onPressed: () => Navigator.of(context).pop(true),
               child: const Text('Logout'),
             ),
           ],
@@ -207,7 +232,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
           MaterialPageRoute(builder: (context) => const LoginScreen()),
         );
       } catch (e) {
-        // Handle error (e.g., show an error message)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error logging out: ${e.toString()}'),
