@@ -82,8 +82,9 @@ class _AdminHomePageState extends State<AdminHomePage> {
               child: StreamBuilder<QuerySnapshot>(
                 stream: getDoctorsStream(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData)
+                  if (!snapshot.hasData) {
                     return const CircularProgressIndicator();
+                  }
                   final doctors = snapshot.data!.docs;
 
                   return ListView.builder(

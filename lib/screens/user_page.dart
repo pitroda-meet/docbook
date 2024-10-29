@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart'; // Firestore import
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
@@ -6,7 +7,7 @@ import 'package:docbook/screens/AdminHomePage.dart';
 
 // User model class to represent Firestore user documents
 class UserModel {
-  String id; // Unique Firestore document ID
+  String id;
   String name;
   String email;
   String role;
@@ -24,17 +25,17 @@ class UserModel {
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return UserModel(
-      id: doc.id, // Firestore document ID
+      id: doc.id,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
-      role: data['role'] ?? 'User', // Default role is 'User' if not provided
-      imageUrl: data['imageUrl'] ?? 'https://via.placeholder.com/150', // Default image if not present
+      role: data['role'] ?? 'user',
+      imageUrl: data['imageUrl'] ?? 'https://via.placeholder.com/150',
     );
   }
 }
 
 class UserPage extends StatefulWidget {
-  const UserPage({Key? key}) : super(key: key);
+  const UserPage({super.key});
 
   @override
   _UserPageState createState() => _UserPageState();
@@ -42,7 +43,7 @@ class UserPage extends StatefulWidget {
 
 class _UserPageState extends State<UserPage> {
   int _selectedIndex = 2;
-  FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Function to update user role in Firestore
   Future<void> _updateUserRole(String userId, String newRole) async {
@@ -65,10 +66,7 @@ class _UserPageState extends State<UserPage> {
     });
 
     if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AdminHomePage()),
-      );
+      _navigateBasedOnRole();
     } else if (index == 1) {
       Navigator.pushReplacement(
         context,
@@ -82,6 +80,29 @@ class _UserPageState extends State<UserPage> {
     }
   }
 
+  // Function to navigate based on user role
+  void _navigateBasedOnRole() async {
+    // Assuming you have the user's ID in context, fetch their role
+    String userId = "currentUserId"; // Replace this with the actual user ID
+    DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+
+    if (userDoc.exists) {
+      String role = userDoc['role'] ?? 'user';
+
+      if (role == 'admin') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const AdminHomePage()),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +111,7 @@ class _UserPageState extends State<UserPage> {
         backgroundColor: Colors.teal,
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('users').snapshots(), // Listening to Firestore user data
+        stream: _firestore.collection('users').snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -100,7 +121,6 @@ class _UserPageState extends State<UserPage> {
             return const Center(child: Text('No users found.'));
           }
 
-          // Convert Firestore documents into UserModel instances
           List<UserModel> users = snapshot.data!.docs
               .map((doc) => UserModel.fromFirestore(doc))
               .toList();
@@ -108,7 +128,7 @@ class _UserPageState extends State<UserPage> {
           return ListView.builder(
             itemCount: users.length,
             itemBuilder: (context, index) {
-              return _buildUserCard(context, users[index]); // Building the user card for each user
+              return _buildUserCard(context, users[index]);
             },
           );
         },
@@ -122,11 +142,8 @@ class _UserPageState extends State<UserPage> {
 
   // Card to display user info with role change functionality
   Widget _buildUserCard(BuildContext context, UserModel user) {
-    // Define valid roles
-    List<String> validRoles = ['admin', 'User'];
-
-    // Ensure user role is one of the valid roles
-    String currentRole = validRoles.contains(user.role) ? user.role : 'User';
+    List<String> validRoles = ['admin', 'user'];
+    String currentRole = validRoles.contains(user.role) ? user.role : 'user';
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -141,8 +158,8 @@ class _UserPageState extends State<UserPage> {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(user.imageUrl), // Displaying user image
-              backgroundColor: Colors.grey[200], // Placeholder color
+              backgroundImage: NetworkImage(user.imageUrl),
+              backgroundColor: Colors.grey[200],
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -167,9 +184,8 @@ class _UserPageState extends State<UserPage> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                // DropdownButton to change user role
                 DropdownButton<String>(
-                  value: currentRole, // Ensures the correct role from Firestore is shown
+                  value: currentRole,
                   items: validRoles.map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -178,7 +194,7 @@ class _UserPageState extends State<UserPage> {
                   }).toList(),
                   onChanged: (String? newValue) {
                     if (newValue != null) {
-                      _updateUserRole(user.id, newValue); // Update role in Firestore
+                      _updateUserRole(user.id, newValue);
                     }
                   },
                 ),

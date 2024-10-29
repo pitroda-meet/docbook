@@ -47,7 +47,7 @@ class _AddPageState extends State<AddPage> {
   Future<String?> _uploadImage(File imageFile) async {
     try {
       String fileName =
-          DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
+          '${DateTime.now().millisecondsSinceEpoch}.jpg';
       Reference storageReference =
           _storage.ref().child('doctor_images/$fileName');
 

@@ -5,10 +5,10 @@ class AdminBottomBar extends StatefulWidget {
   final Function(int) onTap;
 
   const AdminBottomBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   _AdminBottomBarState createState() => _AdminBottomBarState();
