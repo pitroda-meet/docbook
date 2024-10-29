@@ -1,4 +1,5 @@
 import 'package:docbook/screens/AdminHomePage.dart'; // Admin home page import
+import 'package:docbook/screens/doctordash.dart';
 import 'package:docbook/screens/home_screen.dart'; // Regular user home screen
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,8 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String? password;
   bool isPasswordVisible = false;
 
-  final FirebaseFirestore _firestore =
-      FirebaseFirestore.instance; // Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
 
   // Email Validator
   String? _validateEmail(String? value) {
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  // Check if email belongs to admin or user
+  // Check if email belongs to admin, user, or doctor
   Future<String?> _getUserRole(String email) async {
     final userSnapshot = await _firestore
         .collection('users')
@@ -50,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .get();
     if (userSnapshot.docs.isNotEmpty) {
       String role = userSnapshot.docs.first.data()['role'];
-      return role; // Return the role ('admin' or 'user')
+      return role; // Return the role ('admin', 'user', or 'doctor')
     }
     return null; // No user found in Firestore
   }
@@ -83,8 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // No user found in Firestore, show appropriate error message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content:
-                    Text('No user found with this email in the database.')),
+                content: Text('No user found with this email in the database.')),
           );
         } else {
           // If user is found, show success message and navigate
@@ -105,6 +104,13 @@ class _LoginScreenState extends State<LoginScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) => const HomePage(),
+              ),
+            );
+          } else if (userRole == 'doctor') {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DoctorDashboard(signedInUserEmail: '',), // Navigate to Doctor Dashboard
               ),
             );
           }
@@ -219,8 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -245,8 +250,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Sign Up Link
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(
-                        context, '/signup'); // Navigate to User Sign Up page
+                    Navigator.pushNamed(context, '/signup'); // Navigate to User Sign Up page
                   },
                   child: const Text(
                     'Don\'t have an account? Join us',

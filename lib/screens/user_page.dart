@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:docbook/screens/doctordash.dart';
 import 'package:docbook/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
 import 'package:docbook/screens/AdminHomePage.dart';
+//import 'package:docbook/screens/DoctorDashboard.dart'; // Import doctor dashboard screen
 
 // User model class to represent Firestore user documents
 class UserModel {
@@ -82,7 +84,6 @@ class _UserPageState extends State<UserPage> {
 
   // Function to navigate based on user role
   void _navigateBasedOnRole() async {
-    // Assuming you have the user's ID in context, fetch their role
     String userId = "currentUserId"; // Replace this with the actual user ID
     DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
 
@@ -93,6 +94,11 @@ class _UserPageState extends State<UserPage> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const AdminHomePage()),
+        );
+      } else if (role == 'doctor') {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => DoctorDashboard(signedInUserEmail: '',)), // Redirect to doctor dashboard
         );
       } else {
         Navigator.pushReplacement(
@@ -142,7 +148,7 @@ class _UserPageState extends State<UserPage> {
 
   // Card to display user info with role change functionality
   Widget _buildUserCard(BuildContext context, UserModel user) {
-    List<String> validRoles = ['admin', 'user'];
+    List<String> validRoles = ['admin', 'user', 'doctor']; // Add doctor to valid roles
     String currentRole = validRoles.contains(user.role) ? user.role : 'user';
 
     return Card(

@@ -1,6 +1,7 @@
 import 'package:docbook/screens/AdminHomePage.dart';
 import 'package:docbook/screens/Edit_Page.dart';
 import 'package:docbook/screens/add_page.dart';
+import 'package:docbook/screens/doctordash.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -38,13 +39,12 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/enter-code': (context) => const EnterCodeScreen(),
-        '/reset-password': (context) =>
-            const ResetPasswordScreen(resetCode: ''),
+        '/reset-password': (context) => const ResetPasswordScreen(resetCode: ''),
         '/home': (context) => const HomePage(),
         '/admin-home': (context) => const AdminHomePage(),
+        '/doctor-dashboard': (context) => const DoctorDashboard(signedInUserEmail: '',), // Add route for Doctor Dashboard
         '/add-doctor': (context) => const AddPage(),
-        // EditPage route simplified to only pass doctorId
-        '/edit': (context) => const EditPage(doctorId: ''),
+        '/edit': (context) => const EditPage(doctorId: ''), // EditPage route simplified to only pass doctorId
       },
     );
   }

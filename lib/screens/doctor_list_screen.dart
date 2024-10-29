@@ -1,35 +1,40 @@
-import 'package:docbook/models/doctor_model.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-  
+class Doctor {
+  final String id;
+  final String name;
+  final String specialty;
+  final String phoneNumber;
+  final String email;
+  final String imageUrl;
 
-class DoctorListScreen extends StatelessWidget {
-  const DoctorListScreen({super.key});
+  Doctor({
+    required this.id,
+    required this.name,
+    required this.specialty,
+    required this.phoneNumber,
+    required this.email,
+    required this.imageUrl, // Ensure imageUrl is a required field
+  });
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Doctor List')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('doctors').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          var doctors = snapshot.data!.docs.map((doc) => Doctor.fromJson(doc.data() as Map<String, dynamic>)).toList();
-          return ListView.builder(
-            itemCount: doctors.length,
-            itemBuilder: (context, index) {
-              final doctor = doctors[index];
-              return ListTile(
-                title: Text(doctor.name),
-                subtitle: Text('${doctor.specialty} - ${doctor.phoneNumber}'),
-                onTap: () {},
-              );
-            },
-          );
-        },
-      ),
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'specialty': specialty,
+      'phoneNumber': phoneNumber,
+      'email': email,
+      'imageUrl': imageUrl, // Ensure this is included
+    };
+  }
+
+  // Add a fromJson constructor if necessary
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    return Doctor(
+      id: json['id'],
+      name: json['name'],
+      specialty: json['specialty'],
+      phoneNumber: json['phoneNumber'],
+      email: json['email'],
+      imageUrl: json['imageUrl'] ?? '', // Provide a default if null
     );
   }
 }
