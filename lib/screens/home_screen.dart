@@ -114,11 +114,13 @@ class _HomePageState extends State<HomePage> {
                       .collection('doctors')
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData)
+                    if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
+                    }
 
                     final doctors = snapshot.data!.docs;
 
+                    // Filter doctors based on search query
                     final filteredDoctors = doctors.where((doctor) {
                       final doctorData = doctor.data() as Map<String, dynamic>;
                       final doctorName =
@@ -138,14 +140,15 @@ class _HomePageState extends State<HomePage> {
                       ),
                       itemCount: filteredDoctors.length,
                       itemBuilder: (context, index) {
-                        final doctorData = filteredDoctors[index].data()
-                            as Map<String, dynamic>;
+                        final doctorDoc = filteredDoctors[index];
+                        final doctorData =
+                            doctorDoc.data() as Map<String, dynamic>;
                         return _buildDoctorCard(
                           doctorData['name'] ?? 'Unknown',
                           doctorData['specialist'] ?? 'Specialist',
                           doctorData['image_url'] ?? '',
                           context,
-                          doctorData,
+                          doctorDoc.id, // Pass the document ID
                         );
                       },
                     );
@@ -188,14 +191,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildDoctorCard(String name, String specialization, String imageUrl,
-      BuildContext context, Map<String, dynamic> doctorData) {
+      BuildContext context, String doctorId) {
     return GestureDetector(
       onTap: () {
+        print(
+            "Navigating to details for doctor ID: $doctorId"); // Debugging statement
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DoctorDetailPage(
-              doctorData: doctorData,
+              doctorId: doctorId, // Pass the document ID
             ),
           ),
         );

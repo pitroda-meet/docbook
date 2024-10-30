@@ -26,11 +26,14 @@ class CategoryDetailPage extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No doctors found in this category.'));
+            return const Center(
+                child: Text('No doctors found in this category.'));
           }
 
           // Convert Firestore documents to Doctor instances
-          var doctors = snapshot.data!.docs.map((doc) => Doctor.fromFirestore(doc)).toList();
+          var doctors = snapshot.data!.docs
+              .map((doc) => Doctor.fromFirestore(doc))
+              .toList();
 
           return ListView.builder(
             padding: const EdgeInsets.all(16.0),
@@ -73,7 +76,8 @@ class CategoryDetailPage extends StatelessWidget {
               radius: 30,
               backgroundImage: doctor.imageUrl.isNotEmpty
                   ? NetworkImage(doctor.imageUrl)
-                  : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                  : const AssetImage('assets/images/default_avatar.png')
+                      as ImageProvider,
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -82,7 +86,8 @@ class CategoryDetailPage extends StatelessWidget {
                 children: [
                   Text(
                     doctor.name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   Text(
                     doctor.specialty,
@@ -105,6 +110,7 @@ class CategoryDetailPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => BookingPage(
+                      doctorId: doctor.id,
                       doctorName: doctor.name,
                       specialization: doctor.specialty,
                       imagePath: doctor.imageUrl,

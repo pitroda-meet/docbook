@@ -1,5 +1,5 @@
+import 'package:docbook/screens/appointments_page.dart';
 import 'package:flutter/material.dart';
-import 'appointments_page.dart';
 import 'category_page.dart';
 import 'settings_screen.dart';
 import 'home_screen.dart';
