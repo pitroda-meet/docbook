@@ -1,20 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:docbook/screens/profile_screen.dart';
-import 'package:docbook/screens/bottom_bar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'doctor_detail_page.dart';
 import 'category_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:docbook/screens/profile_screen.dart';
+import 'package:docbook/screens/bottom_bar_widget.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String _searchQuery = '';
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Sign out when navigating back to the LoginScreen
         await FirebaseAuth.instance.signOut();
-        return true; // Allow the back navigation
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -30,7 +37,6 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.only(right: 16),
               child: GestureDetector(
                 onTap: () {
-                  // Navigate to the Profile page
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -72,8 +78,13 @@ class HomePage extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const TextField(
-                  decoration: InputDecoration(
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      _searchQuery = value;
+                    });
+                  },
+                  decoration: const InputDecoration(
                     hintText: 'Search.....',
                     border: InputBorder.none,
                     icon: Icon(Icons.search, color: Colors.grey),
@@ -95,24 +106,52 @@ class HomePage extends StatelessWidget {
                       Icons.pregnant_woman, Colors.red, 'Gynae', context),
                 ],
               ),
-
               const SizedBox(height: 20),
 
-              // Doctor Cards
+              // Doctor Cards - Fetching from Firebase
               Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.8,
-                  children: [
-                    _buildDoctorCard('Dr. Amit', 'Specialist Cardiology',
-                        'assets/download1.jpeg', context),
-                    _buildDoctorCard('Dr. Shreya', 'Specialist Gynaecologist',
-                        'assets/download2.jpeg', context),
-                    _buildDoctorCard('Dr. Yash', 'Specialist Orthopedic',
-                        'assets/download3.jpeg', context),
-                    _buildDoctorCard('Dr. Meenakshi', 'Specialist Dentist',
-                        'assets/download4.jpeg', context),
-                  ],
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('doctors')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData)
+                      return const Center(child: CircularProgressIndicator());
+
+                    final doctors = snapshot.data!.docs;
+
+                    // Filter doctors based on search query for both name and specialization
+                    final filteredDoctors = doctors.where((doctor) {
+                      final doctorData = doctor.data() as Map<String, dynamic>;
+                      final doctorName =
+                          doctorData['name']?.toLowerCase() ?? '';
+                      final doctorSpecialization =
+                          doctorData['specialist']?.toLowerCase() ?? '';
+                      return doctorName.contains(_searchQuery.toLowerCase()) ||
+                          doctorSpecialization
+                              .contains(_searchQuery.toLowerCase());
+                    }).toList();
+
+                    return GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.8,
+                      ),
+                      itemCount: filteredDoctors.length,
+                      itemBuilder: (context, index) {
+                        final doctorData = filteredDoctors[index].data()
+                            as Map<String, dynamic>;
+                        return _buildDoctorCard(
+                          doctorData['name'] ?? 'Unknown',
+                          doctorData['specialist'] ?? 'Specialist',
+                          doctorData['image_url'] ?? '',
+                          context,
+                          doctorData,
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
@@ -133,8 +172,7 @@ class HomePage extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CategoryPage(categoryName: label),
-          ),
+              builder: (context) => CategoryPage(categoryName: label)),
         );
       },
       child: Column(
@@ -151,17 +189,15 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildDoctorCard(String name, String specialization, String imagePath,
-      BuildContext context) {
+  Widget _buildDoctorCard(String name, String specialization, String imageUrl,
+      BuildContext context, Map<String, dynamic> doctorData) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => DoctorDetailPage(
-              doctorName: name,
-              specialization: specialization,
-              imagePath: imagePath,
+              doctorData: doctorData,
             ),
           ),
         );
@@ -177,7 +213,7 @@ class HomePage extends StatelessWidget {
                   borderRadius:
                       const BorderRadius.vertical(top: Radius.circular(15)),
                   image: DecorationImage(
-                    image: AssetImage(imagePath),
+                    image: NetworkImage(imageUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
