@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:docbook/screens/bottom_bar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -53,16 +54,18 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         "appointmentTime": appointmentTime,
         "reminderBefore": _selectedReminder,
         "patientName": widget.patientName,
-        "status": "confirmed", 
+        "status": "confirmed",
         "createdAt": Timestamp.now(),
       };
 
-      await FirebaseFirestore.instance.collection('appointments').add(appointmentData);
+      await FirebaseFirestore.instance
+          .collection('appointments')
+          .add(appointmentData);
 
-      // Navigate to AppointmentDetailScreen (can be customized)
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const AppointmentDetailScreen()),
+        MaterialPageRoute(
+            builder: (context) => const AppointmentDetailScreen()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -98,33 +101,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               SizedBox(height: screenHeight * 0.02),
               _buildAvailableTimes(),
               SizedBox(height: screenHeight * 0.02),
-              _buildReminderOptions(),
-              SizedBox(height: screenHeight * 0.02),
               _buildConfirmButton(),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        backgroundColor: Colors.teal,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white.withOpacity(0.6),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            label: 'Appointments',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: BottomBarWidget(
+        currentIndex: 0,
+        onTabTapped: (int value) {},
       ),
     );
   }
@@ -173,7 +157,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Available Time', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const Text('Available Time',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         const SizedBox(height: 16),
         Wrap(
           spacing: 8,
@@ -227,49 +212,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }).toList();
   }
 
-  Widget _buildReminderOptions() {
-    final reminders = [10, 25, 30, 35, 40];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Reminder Me Before', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: reminders.map((minutes) {
-            final isSelected = minutes == _selectedReminder;
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  _selectedReminder = minutes;
-                });
-              },
-              child: Container(
-                width: 80,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                decoration: BoxDecoration(
-                  color: isSelected ? Colors.teal : Colors.teal.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Center(
-                  child: Text(
-                    '$minutes Min',
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.teal,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
   Widget _buildConfirmButton() {
     return Center(
       child: ElevatedButton(
@@ -285,24 +227,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         ),
       ),
     );
-  }
-
-  // Function to handle bottom navigation tab changes
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    switch (index) {
-      case 0:
-        Navigator.pushReplacementNamed(context, '/home'); // Navigate to home screen
-        break;
-      case 1:
-        // Currently on Appointments, so no need to navigate
-        break;
-      case 2:
-        Navigator.pushReplacementNamed(context, '/profile'); // Navigate to profile screen
-        break;
-    }
   }
 }
 
