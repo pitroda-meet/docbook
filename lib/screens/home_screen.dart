@@ -108,7 +108,6 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
 
-              // Doctor Cards - Fetching from Firebase
               Expanded(
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -120,7 +119,6 @@ class _HomePageState extends State<HomePage> {
 
                     final doctors = snapshot.data!.docs;
 
-                    // Filter doctors based on search query for both name and specialization
                     final filteredDoctors = doctors.where((doctor) {
                       final doctorData = doctor.data() as Map<String, dynamic>;
                       final doctorName =
