@@ -1,17 +1,17 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AppointmentScreen.dart';
 import 'package:docbook/screens/bottom_bar_widget.dart';
 
 class BookingPage extends StatefulWidget {
-  final String doctorId; // Add doctorId here
+  final String doctorId;
   final String doctorName;
   final String specialization;
   final String imagePath;
 
   const BookingPage({
     super.key,
-    required this.doctorId, // Include doctorId in the constructor
+    required this.doctorId,
     required this.doctorName,
     required this.specialization,
     required this.imagePath,
@@ -48,8 +48,7 @@ class _BookingPageState extends State<BookingPage> {
                 children: [
                   CircleAvatar(
                     radius: 40,
-                    backgroundImage:
-                        NetworkImage(widget.imagePath), // Use NetworkImage
+                    backgroundImage: NetworkImage(widget.imagePath),
                   ),
                   const SizedBox(width: 16),
                   Expanded(

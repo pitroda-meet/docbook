@@ -43,17 +43,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Check if email belongs to admin, user, or doctor
-  Future<String?> _getUserRole(String email) async {
+Future<String?> _getUserRole(String email) async {
+  try {
     final userSnapshot = await _firestore
         .collection('users')
         .where('email', isEqualTo: email)
         .get();
+
     if (userSnapshot.docs.isNotEmpty) {
       String role = userSnapshot.docs.first.data()['role'];
       return role; // Return the role ('admin', 'user', or 'doctor')
     }
-    return null; // No user found in Firestore
+  } catch (e) {
+    // Handle any Firestore errors
+    print('Error retrieving user role: $e');
   }
+  return null; // No user found in Firestore
+}
 
   // Handle Login Submission
   Future<void> _submitForm() async {
@@ -73,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       try {
         // Log in with email and password
+        // ignore: unused_local_variable
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email!, password: password!);
 
