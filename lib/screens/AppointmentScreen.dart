@@ -1,8 +1,10 @@
+// Import your necessary packages and files
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'appointments_page.dart'; // Import your appointments page
 
 class AppointmentScreen extends StatefulWidget {
   final String doctorName;
@@ -33,7 +35,7 @@ class AppointmentScreen extends StatefulWidget {
 class _AppointmentScreenState extends State<AppointmentScreen> {
   DateTime _selectedDay = DateTime.now();
   TimeOfDay _selectedTime = const TimeOfDay(hour: 10, minute: 0);
-  late Razorpay _razorpay; // Razorpay instance
+  late Razorpay _razorpay;
 
   @override
   void initState() {
@@ -46,30 +48,44 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
   @override
   void dispose() {
-    _razorpay.clear(); // Clear all listeners on dispose
+    _razorpay.clear();
     super.dispose();
   }
 
   // Payment success handler
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment successful: ${response.paymentId}')),
-    );
-    _saveAppointment(); // Save appointment after successful payment
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment successful: ${response.paymentId}')),
+      );
+      _saveAppointment(); // Save appointment after successful payment
+
+      // Redirect to AppointmentsPage after successful payment
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => AppointmentsPage()),
+      );
+    }
   }
 
-  // Payment error handler
+  // Payment error handler with delay and mounted check
   void _handlePaymentError(PaymentFailureResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Payment failed: ${response.message}')),
-    );
+    Future.delayed(Duration(milliseconds: 300), () {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Payment failed: ${response.message}')),
+        );
+      }
+    });
   }
 
-  // External wallet handler
+  // External wallet handler with mounted check
   void _handleExternalWallet(ExternalWalletResponse response) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('External Wallet: ${response.walletName}')),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('External Wallet: ${response.walletName}')),
+      );
+    }
   }
 
   Future<void> _startPayment() async {
@@ -83,16 +99,20 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         'email': widget.patientEmail,
       },
       'theme': {
-        'color': '#F37254', // Optional: Custom theme color
+        'color': '#F37254',
       },
     };
 
     try {
       _razorpay.open(options); // Open Razorpay payment gateway
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error opening payment gateway: $e')),
-      );
+      Future.delayed(Duration(milliseconds: 300), () {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error opening payment gateway: $e')),
+          );
+        }
+      });
     }
   }
 
@@ -100,9 +120,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please log in to book an appointment.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Please log in to book an appointment.')),
+        );
+      }
       return;
     }
 
@@ -131,15 +154,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         "createdAt": Timestamp.now(),
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Appointment successfully created!')),
-      );
-
-      Navigator.pop(context); // Navigate back after saving
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Appointment successfully created!')),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save appointment: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to save appointment: $e')),
+        );
+      }
     }
   }
 
@@ -157,7 +182,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             _buildAvailableTimes(),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _startPayment, // Trigger payment process
+              onPressed: _startPayment,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal,
               ),
