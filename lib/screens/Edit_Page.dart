@@ -32,6 +32,8 @@ class _EditPageState extends State<EditPage> {
       TextEditingController();
   final TextEditingController _gpServicesController = TextEditingController();
   final TextEditingController _professionController = TextEditingController();
+  final TextEditingController _feesController =
+      TextEditingController(); // Controller for fees
 
   final List<String> _categories = [
     'Dermatologist',
@@ -63,6 +65,7 @@ class _EditPageState extends State<EditPage> {
         _gpServicesController.text = data['gp_services'] ?? '';
         _professionController.text =
             data['profession'] ?? ''; // Fetching profession
+        _feesController.text = data['fees'] ?? ''; // Fetch fees
         _selectedGender = data['gender'];
         _selectedCategory =
             _categories.contains(data['category']) ? data['category'] : null;
@@ -116,6 +119,7 @@ class _EditPageState extends State<EditPage> {
       'gender': _selectedGender,
       'category': _selectedCategory,
       'profession': _professionController.text, // Update profession
+      'fees': _feesController.text, // Update doctor fees
       'image_url': imageUrl ?? _existingImageUrl,
     });
     Navigator.pop(context);
@@ -248,6 +252,17 @@ class _EditPageState extends State<EditPage> {
                   labelText: "Profession",
                   border: OutlineInputBorder(),
                 ),
+              ),
+              const SizedBox(height: 20),
+
+              // Doctor's Fees Text Field
+              TextField(
+                controller: _feesController,
+                decoration: const InputDecoration(
+                  labelText: "Doctor's Fees",
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
               const SizedBox(height: 20),
 

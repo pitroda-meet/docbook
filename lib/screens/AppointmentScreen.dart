@@ -1,10 +1,9 @@
-// Import your necessary packages and files
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'appointments_page.dart'; // Import your appointments page
+import 'appointments_page.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final String doctorName;
@@ -15,6 +14,7 @@ class AppointmentScreen extends StatefulWidget {
   final String patientMobile;
   final String patientEmail;
   final String doctorId;
+  final String doctorFees;
 
   const AppointmentScreen({
     super.key,
@@ -26,6 +26,7 @@ class AppointmentScreen extends StatefulWidget {
     required this.patientMobile,
     required this.patientEmail,
     required this.doctorId,
+    required this.doctorFees,
   });
 
   @override
@@ -52,15 +53,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     super.dispose();
   }
 
-  // Payment success handler
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Payment successful: ${response.paymentId}')),
       );
-      _saveAppointment(); // Save appointment after successful payment
+      _saveAppointment();
 
-      // Redirect to AppointmentsPage after successful payment
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => AppointmentsPage()),
@@ -68,7 +67,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  // Payment error handler with delay and mounted check
   void _handlePaymentError(PaymentFailureResponse response) {
     Future.delayed(Duration(milliseconds: 300), () {
       if (mounted) {
@@ -79,7 +77,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     });
   }
 
-  // External wallet handler with mounted check
   void _handleExternalWallet(ExternalWalletResponse response) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +86,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   }
 
   Future<void> _startPayment() async {
+    int amount;
+    try {
+      amount = int.parse(widget.doctorFees) * 100;
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid doctor fee amount')),
+      );
+      return;
+    }
+
     var options = {
-      'key': 'rzp_test_FNY2BJxFQpkE2l', // Replace with your Razorpay key
-      'amount': 50000, // Amount in the smallest currency unit (500 INR)
+      'key': 'rzp_test_FNY2BJxFQpkE2l',
+      'amount': amount,
       'name': widget.doctorName,
       'description': 'Appointment with ${widget.doctorName}',
       'prefill': {
@@ -104,15 +111,13 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     };
 
     try {
-      _razorpay.open(options); // Open Razorpay payment gateway
+      _razorpay.open(options);
     } catch (e) {
-      Future.delayed(Duration(milliseconds: 300), () {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error opening payment gateway: $e')),
-          );
-        }
-      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error opening payment gateway: $e')),
+        );
+      }
     }
   }
 
@@ -151,6 +156,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         "appointmentDate": _selectedDay,
         "appointmentTime": appointmentTime,
         "status": "confirmed",
+        "doctorFees": widget.doctorFees, // Added doctorFees field here
         "createdAt": Timestamp.now(),
       });
 

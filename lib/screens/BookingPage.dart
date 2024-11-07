@@ -1,4 +1,3 @@
-// ignore: file_names
 import 'package:flutter/material.dart';
 import 'AppointmentScreen.dart';
 import 'package:docbook/screens/bottom_bar_widget.dart';
@@ -8,6 +7,7 @@ class BookingPage extends StatefulWidget {
   final String doctorName;
   final String specialization;
   final String imagePath;
+  final String doctorFees;
 
   const BookingPage({
     super.key,
@@ -15,6 +15,7 @@ class BookingPage extends StatefulWidget {
     required this.doctorName,
     required this.specialization,
     required this.imagePath,
+    required this.doctorFees,
   });
 
   @override
@@ -59,6 +60,8 @@ class _BookingPageState extends State<BookingPage> {
                             style: const TextStyle(
                                 fontSize: 20, fontWeight: FontWeight.bold)),
                         Text(widget.specialization,
+                            style: const TextStyle(color: Colors.grey)),
+                        Text(widget.doctorFees,
                             style: const TextStyle(color: Colors.grey)),
                       ],
                     ),
@@ -127,6 +130,7 @@ class _BookingPageState extends State<BookingPage> {
                       MaterialPageRoute(
                         builder: (context) => AppointmentScreen(
                           doctorId: widget.doctorId,
+                          doctorFees: widget.doctorFees,
                           doctorName: widget.doctorName,
                           specialization: widget.specialization,
                           patientName: _nameController.text,

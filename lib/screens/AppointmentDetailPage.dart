@@ -54,54 +54,159 @@ class AppointmentDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Doctor: ${doctorDetails?['name'] ?? 'Unknown'}',
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.bold),
+                  // Doctor Info Section
+                  Container(
+                    width: double.infinity, // Ensures the card takes full width
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Dr. ${doctorDetails?['name'] ?? 'Unknown'}',
+                              style: const TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Specialization: ${doctorDetails?['specialist'] ?? 'N/A'}',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.grey),
+                            ),
+                            Text(
+                              'Category: ${doctorDetails?['category'] ?? 'N/A'}',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(Icons.attach_money,
+                                    color: Colors.green),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Fees: ₹${appointment['doctorFees']}',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(Icons.phone, color: Colors.blue),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'Mobile: ${doctorDetails?['mobile'] ?? 'N/A'}',
+                                  style: const TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Specialization: ${doctorDetails?['specialist'] ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 18),
+
+                  // Appointment Info Section
+                  Container(
+                    width: double.infinity, // Ensures the card takes full width
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Appointment Details',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Appointment Date: $formattedDate',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'Appointment Time: $formattedTime',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  Text(
-                    'Category: ${doctorDetails?['category'] ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 18),
+
+                  // Patient Info Section
+                  Container(
+                    width: double.infinity, // Ensures the card takes full width
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Patient Details',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Name: ${appointment['patientName']}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'Age: ${appointment['patientAge']}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'Email: ${appointment['patientEmail']}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'Mobile: ${appointment['patientMobile']}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'Gender: ${appointment['patientGender']}',
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Divider(color: Colors.teal),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Appointment Date: $formattedDate',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Appointment Time: $formattedTime',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Patient Name: ${appointment['patientName']}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Patient Age: ${appointment['patientAge']}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Patient Email: ${appointment['patientEmail']}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Patient Mobile: ${appointment['patientMobile']}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Patient Gender: ${appointment['patientGender']}',
-                    style: const TextStyle(fontSize: 18),
-                  ),
-                  Text(
-                    'Status: ${appointment['status']}',
-                    style: const TextStyle(fontSize: 18),
+
+                  // Status Section
+                  Container(
+                    width: double.infinity, // Ensures the card takes full width
+                    child: Card(
+                      elevation: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Status: ${appointment['status']}',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.green),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

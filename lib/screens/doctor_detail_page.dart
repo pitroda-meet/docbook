@@ -119,6 +119,8 @@ class DoctorDetailPage extends StatelessWidget {
                                                 'Specialist',
                                         imagePath:
                                             doctorData['image_url'] ?? '',
+                                        doctorFees: doctorData['fees'] ??
+                                            'Not Available', // Passing fees
                                       ),
                                     ),
                                   );
@@ -169,6 +171,11 @@ class DoctorDetailPage extends StatelessWidget {
                             doctorData['mobile'] ?? 'Not Available'),
                         _buildDetailItem(Icons.healing, 'GP Services',
                             doctorData['gp_services'] ?? 'Not Available'),
+                        _buildDetailItem(
+                            Icons.monetization_on,
+                            'Fees',
+                            doctorData['fees'] ??
+                                'Not Available'), // Displaying fees
                       ],
                     ),
                   ),

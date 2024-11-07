@@ -106,17 +106,17 @@ class CategoryDetailPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => BookingPage(
-                      doctorId: doctor.id,
-                      doctorName: doctor.name,
-                      specialization: doctor.specialty,
-                      imagePath: doctor.imageUrl,
-                    ),
-                  ),
-                );
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => BookingPage(
+                //       doctorId: doctor.id,
+                //       doctorName: doctor.name,
+                //       specialization: doctor.specialty,
+                //       imagePath: doctor.imageUrl,
+                //     ),
+                //   ),
+                // );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green,

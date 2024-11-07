@@ -24,6 +24,7 @@ class _AddPageState extends State<AddPage> {
   final _emailController = TextEditingController();
   final _specialistController = TextEditingController();
   final _gpServicesController = TextEditingController();
+  final _feesController = TextEditingController(); // Added Fees Controller
   String? _selectedProfession;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -46,8 +47,7 @@ class _AddPageState extends State<AddPage> {
   // Method to upload image to Firebase Storage
   Future<String?> _uploadImage(File imageFile) async {
     try {
-      String fileName =
-          '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
       Reference storageReference =
           _storage.ref().child('doctor_images/$fileName');
 
@@ -77,6 +77,7 @@ class _AddPageState extends State<AddPage> {
         _emailController.text.isEmpty ||
         _specialistController.text.isEmpty ||
         _gpServicesController.text.isEmpty ||
+        _feesController.text.isEmpty || // Check for fees field
         _selectedCategory == null ||
         _selectedProfession == null ||
         _selectedGender == null) {
@@ -110,6 +111,7 @@ class _AddPageState extends State<AddPage> {
         'email': _emailController.text,
         'specialist': _specialistController.text,
         'gp_services': _gpServicesController.text,
+        'fees': _feesController.text, // Add fees to Firestore
         'category': _selectedCategory,
         'profession': _selectedProfession,
         'gender': _selectedGender,
@@ -127,6 +129,7 @@ class _AddPageState extends State<AddPage> {
       _emailController.clear();
       _specialistController.clear();
       _gpServicesController.clear();
+      _feesController.clear(); // Clear the fees field
       setState(() {
         _image = null;
         _selectedGender = null;
@@ -255,6 +258,20 @@ class _AddPageState extends State<AddPage> {
                           labelText: "General Practitioner (GP) Services",
                           border: OutlineInputBorder(),
                         ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Doctor's Fees (New Field)
+                    SizedBox(
+                      width: fieldWidth,
+                      child: TextField(
+                        controller: _feesController,
+                        decoration: const InputDecoration(
+                          labelText: "Doctor's Fees",
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
                       ),
                     ),
                     const SizedBox(height: 20),
