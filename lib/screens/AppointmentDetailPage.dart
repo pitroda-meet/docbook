@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; // Importing the intl package
+import 'package:intl/intl.dart';
 
 class AppointmentDetailPage extends StatelessWidget {
   final Map<String, dynamic> appointment;
@@ -22,13 +22,43 @@ class AppointmentDetailPage extends StatelessWidget {
     return null;
   }
 
+  // Helper method to get color and icon based on status
+  Map<String, dynamic> _getStatusDetails(String status) {
+    switch (status) {
+      case 'pending':
+        return {
+          'color': Colors.orange,
+          'icon': Icons.hourglass_empty,
+        };
+      case 'confirmed':
+        return {
+          'color': Colors.green,
+          'icon': Icons.check_circle,
+        };
+      case 'cancelled':
+        return {
+          'color': Colors.red,
+          'icon': Icons.cancel,
+        };
+      default:
+        return {
+          'color': Colors.grey,
+          'icon': Icons.help_outline,
+        };
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Format the appointment date and time
     DateTime appointmentDate =
         (appointment['appointmentDate'] as Timestamp).toDate();
     String formattedDate = DateFormat('MMMM d, yyyy').format(appointmentDate);
     String formattedTime = DateFormat('hh:mm a').format(appointmentDate);
+
+    // Get color and icon based on appointment status
+    final statusDetails = _getStatusDetails(appointment['status']);
+    final statusColor = statusDetails['color'];
+    final statusIcon = statusDetails['icon'];
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +86,7 @@ class AppointmentDetailPage extends StatelessWidget {
                 children: [
                   // Doctor Info Section
                   Container(
-                    width: double.infinity, // Ensures the card takes full width
+                    width: double.infinity,
                     child: Card(
                       elevation: 4,
                       margin: const EdgeInsets.only(bottom: 16),
@@ -114,7 +144,7 @@ class AppointmentDetailPage extends StatelessWidget {
 
                   // Appointment Info Section
                   Container(
-                    width: double.infinity, // Ensures the card takes full width
+                    width: double.infinity,
                     child: Card(
                       elevation: 4,
                       margin: const EdgeInsets.only(bottom: 16),
@@ -145,7 +175,7 @@ class AppointmentDetailPage extends StatelessWidget {
 
                   // Patient Info Section
                   Container(
-                    width: double.infinity, // Ensures the card takes full width
+                    width: double.infinity,
                     child: Card(
                       elevation: 4,
                       margin: const EdgeInsets.only(bottom: 16),
@@ -188,7 +218,7 @@ class AppointmentDetailPage extends StatelessWidget {
 
                   // Status Section
                   Container(
-                    width: double.infinity, // Ensures the card takes full width
+                    width: double.infinity,
                     child: Card(
                       elevation: 4,
                       margin: const EdgeInsets.only(bottom: 16),
@@ -196,12 +226,15 @@ class AppointmentDetailPage extends StatelessWidget {
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
-                            const Icon(Icons.check_circle, color: Colors.green),
+                            Icon(statusIcon, color: statusColor),
                             const SizedBox(width: 8),
                             Text(
                               'Status: ${appointment['status']}',
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.green),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: statusColor,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),

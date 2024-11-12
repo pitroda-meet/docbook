@@ -96,14 +96,7 @@ class DoctorDetailPage extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               // Display the doctor ID
-                              Text(
-                                'Doctor ID: ${doctorId}',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey,
-                                ),
-                              ),
+
                               const SizedBox(height: 16),
                               ElevatedButton(
                                 onPressed: () {
@@ -111,17 +104,17 @@ class DoctorDetailPage extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => BookingPage(
-                                        doctorId: doctorId,
-                                        doctorName:
-                                            doctorData['name'] ?? 'No Name',
-                                        specialization:
-                                            doctorData['specialist'] ??
-                                                'Specialist',
-                                        imagePath:
-                                            doctorData['image_url'] ?? '',
-                                        doctorFees: doctorData['fees'] ??
-                                            'Not Available', // Passing fees
-                                      ),
+                                          doctorId: doctorId,
+                                          doctorName:
+                                              doctorData['name'] ?? 'No Name',
+                                          specialization:
+                                              doctorData['specialist'] ??
+                                                  'Specialist',
+                                          imagePath:
+                                              doctorData['image_url'] ?? '',
+                                          doctorFees: doctorData['fees'] ??
+                                              'Not Available', // Passing fees
+                                          doctoremail: doctorData['email']),
                                     ),
                                   );
                                 },

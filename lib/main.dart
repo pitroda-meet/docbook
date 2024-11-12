@@ -15,9 +15,15 @@ import 'screens/reset_password_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    print("Error initializing Firebase: $e");
+    // Optionally, navigate to a fallback error screen
+  }
 
   runApp(const MyApp());
 }
@@ -39,12 +45,15 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/enter-code': (context) => const EnterCodeScreen(),
-        '/reset-password': (context) => const ResetPasswordScreen(resetCode: ''),
+        '/reset-password': (context) =>
+            const ResetPasswordScreen(resetCode: ''),
         '/home': (context) => const HomePage(),
         '/admin-home': (context) => const AdminHomePage(),
-        '/doctor-dashboard': (context) => const DoctorDashboard(signedInUserEmail: '',), // Add route for Doctor Dashboard
+        '/doctor-dashboard': (context) =>
+            DoctorDashboard(), // Add route for Doctor Dashboard
         '/add-doctor': (context) => const AddPage(),
-        '/edit': (context) => const EditPage(doctorId: ''), // EditPage route simplified to only pass doctorId
+        '/edit': (context) => const EditPage(
+            doctorId: ''), // EditPage route simplified to only pass doctorId
       },
     );
   }

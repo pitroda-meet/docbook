@@ -50,7 +50,10 @@ class _UserPageState extends State<UserPage> {
   // Function to update user role in Firestore
   Future<void> _updateUserRole(String userId, String newRole) async {
     try {
-      await _firestore.collection('users').doc(userId).update({'role': newRole});
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .update({'role': newRole});
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Role updated to $newRole')),
       );
@@ -85,7 +88,8 @@ class _UserPageState extends State<UserPage> {
   // Function to navigate based on user role
   void _navigateBasedOnRole() async {
     String userId = "currentUserId"; // Replace this with the actual user ID
-    DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+    DocumentSnapshot userDoc =
+        await _firestore.collection('users').doc(userId).get();
 
     if (userDoc.exists) {
       String role = userDoc['role'] ?? 'user';
@@ -98,7 +102,7 @@ class _UserPageState extends State<UserPage> {
       } else if (role == 'doctor') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => DoctorDashboard(signedInUserEmail: '',)), // Redirect to doctor dashboard
+          MaterialPageRoute(builder: (context) => DoctorDashboard()),
         );
       } else {
         Navigator.pushReplacement(
@@ -148,7 +152,11 @@ class _UserPageState extends State<UserPage> {
 
   // Card to display user info with role change functionality
   Widget _buildUserCard(BuildContext context, UserModel user) {
-    List<String> validRoles = ['admin', 'user', 'doctor']; // Add doctor to valid roles
+    List<String> validRoles = [
+      'admin',
+      'user',
+      'doctor'
+    ]; // Add doctor to valid roles
     String currentRole = validRoles.contains(user.role) ? user.role : 'user';
 
     return Card(

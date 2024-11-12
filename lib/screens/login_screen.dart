@@ -18,7 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   String? password;
   bool isPasswordVisible = false;
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
+  final FirebaseFirestore _firestore =
+      FirebaseFirestore.instance; // Firestore instance
 
   // Email Validator
   String? _validateEmail(String? value) {
@@ -43,23 +44,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   // Check if email belongs to admin, user, or doctor
-Future<String?> _getUserRole(String email) async {
-  try {
-    final userSnapshot = await _firestore
-        .collection('users')
-        .where('email', isEqualTo: email)
-        .get();
+  Future<String?> _getUserRole(String email) async {
+    try {
+      final userSnapshot = await _firestore
+          .collection('users')
+          .where('email', isEqualTo: email)
+          .get();
 
-    if (userSnapshot.docs.isNotEmpty) {
-      String role = userSnapshot.docs.first.data()['role'];
-      return role; // Return the role ('admin', 'user', or 'doctor')
+      if (userSnapshot.docs.isNotEmpty) {
+        String role = userSnapshot.docs.first.data()['role'];
+        return role; // Return the role ('admin', 'user', or 'doctor')
+      }
+    } catch (e) {
+      // Handle any Firestore errors
+      print('Error retrieving user role: $e');
     }
-  } catch (e) {
-    // Handle any Firestore errors
-    print('Error retrieving user role: $e');
+    return null; // No user found in Firestore
   }
-  return null; // No user found in Firestore
-}
 
   // Handle Login Submission
   Future<void> _submitForm() async {
@@ -90,7 +91,8 @@ Future<String?> _getUserRole(String email) async {
           // No user found in Firestore, show appropriate error message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-                content: Text('No user found with this email in the database.')),
+                content:
+                    Text('No user found with this email in the database.')),
           );
         } else {
           // If user is found, show success message and navigate
@@ -117,7 +119,8 @@ Future<String?> _getUserRole(String email) async {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                builder: (context) => DoctorDashboard(signedInUserEmail: '',), // Navigate to Doctor Dashboard
+                builder: (context) =>
+                    DoctorDashboard(), // Navigate to Doctor Dashboard
               ),
             );
           }
@@ -232,7 +235,8 @@ Future<String?> _getUserRole(String email) async {
                 ElevatedButton(
                   onPressed: _submitForm,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 50, vertical: 15),
                     backgroundColor: Colors.teal,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -257,7 +261,8 @@ Future<String?> _getUserRole(String email) async {
                 // Sign Up Link
                 GestureDetector(
                   onTap: () {
-                    Navigator.pushNamed(context, '/signup'); // Navigate to User Sign Up page
+                    Navigator.pushNamed(
+                        context, '/signup'); // Navigate to User Sign Up page
                   },
                   child: const Text(
                     'Don\'t have an account? Join us',

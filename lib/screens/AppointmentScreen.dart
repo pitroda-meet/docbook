@@ -15,6 +15,7 @@ class AppointmentScreen extends StatefulWidget {
   final String patientEmail;
   final String doctorId;
   final String doctorFees;
+  final String doctoremail;
 
   const AppointmentScreen({
     super.key,
@@ -27,6 +28,7 @@ class AppointmentScreen extends StatefulWidget {
     required this.patientEmail,
     required this.doctorId,
     required this.doctorFees,
+    required this.doctoremail,
   });
 
   @override
@@ -155,9 +157,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         "patientEmail": widget.patientEmail,
         "appointmentDate": _selectedDay,
         "appointmentTime": appointmentTime,
-        "status": "confirmed",
-        "doctorFees": widget.doctorFees, // Added doctorFees field here
+        "status": "pending", // Changed status to "pending"
+        "doctorFees": widget.doctorFees,
         "createdAt": Timestamp.now(),
+        "doctoremail": widget.doctoremail,
       });
 
       if (mounted) {

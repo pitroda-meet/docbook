@@ -8,6 +8,7 @@ class BookingPage extends StatefulWidget {
   final String specialization;
   final String imagePath;
   final String doctorFees;
+  final String doctoremail;
 
   const BookingPage({
     super.key,
@@ -16,6 +17,7 @@ class BookingPage extends StatefulWidget {
     required this.specialization,
     required this.imagePath,
     required this.doctorFees,
+    required this.doctoremail,
   });
 
   @override
@@ -130,6 +132,7 @@ class _BookingPageState extends State<BookingPage> {
                       MaterialPageRoute(
                         builder: (context) => AppointmentScreen(
                           doctorId: widget.doctorId,
+                          doctoremail: widget.doctoremail,
                           doctorFees: widget.doctorFees,
                           doctorName: widget.doctorName,
                           specialization: widget.specialization,
