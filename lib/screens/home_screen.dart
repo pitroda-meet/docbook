@@ -15,6 +15,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _searchQuery = '';
+  String profileImageUrl = ''; // Holds the URL of the user's profile image
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserProfileImage();
+  }
+
+  // Fetch user's profile image URL from Firestore
+  Future<void> _fetchUserProfileImage() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore
+          .instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userDoc.exists && userDoc.data() != null) {
+        setState(() {
+          profileImageUrl = userDoc.data()!['profileImageUrl'] ?? '';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +69,14 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
                 child: CircleAvatar(
+                  radius: 20,
                   backgroundColor: Colors.blue.shade100,
-                  child: const Icon(Icons.person, color: Colors.teal),
+                  backgroundImage: profileImageUrl.isNotEmpty
+                      ? NetworkImage(profileImageUrl)
+                      : null,
+                  child: profileImageUrl.isEmpty
+                      ? const Icon(Icons.person, color: Colors.teal)
+                      : null,
                 ),
               ),
             ),
@@ -93,19 +124,19 @@ class _HomePageState extends State<HomePage> {
               ),
 
               // Category Icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildCategoryIcon(
-                      Icons.local_hospital, Colors.blue, 'Dentist', context),
-                  _buildCategoryIcon(
-                      Icons.favorite, Colors.green, 'Cardiology', context),
-                  _buildCategoryIcon(
-                      Icons.visibility, Colors.orange, 'Eye', context),
-                  _buildCategoryIcon(
-                      Icons.pregnant_woman, Colors.red, 'Gynae', context),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   children: [
+              //     _buildCategoryIcon(
+              //         Icons.local_hospital, Colors.blue, 'Dentist', context),
+              //     _buildCategoryIcon(
+              //         Icons.favorite, Colors.green, 'Cardiology', context),
+              //     _buildCategoryIcon(
+              //         Icons.visibility, Colors.orange, 'Eye', context),
+              //     _buildCategoryIcon(
+              //         Icons.pregnant_woman, Colors.red, 'Gynae', context),
+              //   ],
+              // ),
               const SizedBox(height: 20),
 
               Expanded(
@@ -148,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                           doctorData['specialist'] ?? 'Specialist',
                           doctorData['image_url'] ?? '',
                           context,
-                          doctorDoc.id, // Pass the document ID
+                          doctorDoc.id,
                         );
                       },
                     );
