@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:docbook/screens/add_page.dart';
 import 'package:docbook/screens/admin_bottom_bar.dart';
 import 'package:docbook/screens/AdminHomePage.dart';
-//import 'package:docbook/screens/DoctorDashboard.dart'; // Import doctor dashboard screen
 
 // User model class to represent Firestore user documents
 class UserModel {
@@ -13,14 +12,14 @@ class UserModel {
   String name;
   String email;
   String role;
-  String imageUrl;
+  String profileImageUrl;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
     required this.role,
-    required this.imageUrl,
+    required this.profileImageUrl,
   });
 
   // Factory method to create a UserModel from Firestore document
@@ -31,7 +30,8 @@ class UserModel {
       name: data['name'] ?? '',
       email: data['email'] ?? '',
       role: data['role'] ?? 'user',
-      imageUrl: data['imageUrl'] ?? 'https://via.placeholder.com/150',
+      profileImageUrl:
+          data['profileImageUrl'] ?? 'https://via.placeholder.com/150',
     );
   }
 }
@@ -152,11 +152,7 @@ class _UserPageState extends State<UserPage> {
 
   // Card to display user info with role change functionality
   Widget _buildUserCard(BuildContext context, UserModel user) {
-    List<String> validRoles = [
-      'admin',
-      'user',
-      'doctor'
-    ]; // Add doctor to valid roles
+    List<String> validRoles = ['admin', 'user', 'doctor'];
     String currentRole = validRoles.contains(user.role) ? user.role : 'user';
 
     return Card(
@@ -172,7 +168,7 @@ class _UserPageState extends State<UserPage> {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(user.imageUrl),
+              backgroundImage: NetworkImage(user.profileImageUrl),
               backgroundColor: Colors.grey[200],
             ),
             const SizedBox(width: 20),

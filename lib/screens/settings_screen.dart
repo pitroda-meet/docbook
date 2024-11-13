@@ -27,7 +27,8 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const ProfileScreen()), // Ensure const constructor
+                    builder: (context) =>
+                        const ProfileScreen()), // Ensure const constructor
               );
             },
           ),
@@ -39,7 +40,9 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const ResetPasswordScreen(resetCode: ''), // Pass the resetCode dynamically if needed
+                  builder: (context) => const ResetPasswordScreen(
+                      resetCode:
+                          ''), // Pass the resetCode dynamically if needed
                 ),
               );
             },
@@ -51,24 +54,28 @@ class SettingsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const AboutUsScreen()), // Ensure const constructor
+                    builder: (context) =>
+                        const AboutUsScreen()), // Ensure const constructor
               );
             },
           ),
-          ListTile(
-            leading: const Icon(Icons.medical_services),
-            title: const Text('Patient Details'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const PatientDetailsScreen()), // Ensure const constructor
-              );
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.medical_services),
+          //   title: const Text('Patient Details'),
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => const PatientDetailsScreen()), // Ensure const constructor
+          //     );
+          //   },
+          // ),
         ],
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 3, onTabTapped: (int value) {  },),
+      bottomNavigationBar: BottomBarWidget(
+        currentIndex: 2,
+        onTabTapped: (int value) {},
+      ),
     );
   }
 }

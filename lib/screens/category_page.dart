@@ -35,7 +35,10 @@ class CategoryPage extends StatelessWidget {
           },
         ),
       ),
-      bottomNavigationBar: BottomBarWidget(currentIndex: 2, onTabTapped: (int value) {  },),
+      bottomNavigationBar: BottomBarWidget(
+        currentIndex: 2,
+        onTabTapped: (int value) {},
+      ),
     );
   }
 

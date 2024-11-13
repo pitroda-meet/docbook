@@ -1,6 +1,5 @@
 import 'package:docbook/screens/appointments_page.dart';
 import 'package:flutter/material.dart';
-import 'category_page.dart';
 import 'settings_screen.dart';
 import 'home_screen.dart';
 
@@ -24,8 +23,8 @@ class BottomBarWidget extends StatelessWidget {
       showSelectedLabels: false,
       showUnselectedLabels: false,
       onTap: (index) {
-        onTabTapped(index); // Use the onTabTapped callback
-        _onTabSelected(context, index); // Handle navigation here
+        onTabTapped(index);
+        _onTabSelected(context, index);
       },
       items: const [
         BottomNavigationBarItem(
@@ -35,10 +34,6 @@ class BottomBarWidget extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(Icons.calendar_today, size: 25),
           label: 'Appointments',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.apps, size: 25),
-          label: 'Categories',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.settings, size: 25),
@@ -65,15 +60,6 @@ class BottomBarWidget extends StatelessWidget {
         );
         break;
       case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                const CategoryPage(categoryName: 'All Categories'),
-          ),
-        );
-        break;
-      case 3:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SettingsScreen()),
